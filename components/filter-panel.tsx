@@ -56,7 +56,7 @@ export function FilterPanel({ filters, onFiltersChange, onClose }: FilterPanelPr
     rating: false,
   })
 
-  const toggleSection = (section: string) => {
+  const toggleSection = (section: keyof typeof openSections) => {
     setOpenSections((prev) => ({ ...prev, [section]: !prev[section] }))
   }
 

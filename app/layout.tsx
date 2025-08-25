@@ -10,9 +10,9 @@ const dmSans = DM_Sans({
 })
 
 export const metadata: Metadata = {
-  title: "TherapyConnect - Find Your Perfect Therapist",
+  title: "Psi Mammoliti",
   description: "Professional therapist directory with easy scheduling and verified profiles",
-  generator: "v0.app",
+  generator: "Psi Mammoliti Scheduler",
 }
 
 export default function RootLayout({

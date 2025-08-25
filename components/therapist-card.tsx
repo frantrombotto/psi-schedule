@@ -8,6 +8,12 @@ import { Badge } from "@/components/ui/badge"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { BookingModal } from "./booking-modal"
 
+export enum SessionType {
+  VIDEO = "video",
+  PHONE = "phone",
+  IN_PERSON = "in-person",
+}
+
 interface TherapistCardProps {
   therapist: {
     id: string
@@ -21,7 +27,7 @@ interface TherapistCardProps {
     nextAvailable: string
     avatar: string
     acceptsInsurance: boolean
-    sessionTypes: ("in-person" | "video" | "phone")[]
+    sessionTypes: SessionType[]
     languages: string[]
     yearsExperience: number
   }
@@ -81,19 +87,19 @@ export function TherapistCard({ therapist }: TherapistCardProps) {
               </div>
 
               <div className="flex items-center space-x-2 mb-3">
-                {therapist.sessionTypes.includes("video") && (
+                {therapist.sessionTypes.includes(SessionType.VIDEO) && (
                   <div className="flex items-center space-x-1 text-xs text-muted-foreground">
                     <Video className="h-3 w-3" />
                     <span>Video</span>
                   </div>
                 )}
-                {therapist.sessionTypes.includes("phone") && (
+                {therapist.sessionTypes.includes(SessionType.PHONE) && (
                   <div className="flex items-center space-x-1 text-xs text-muted-foreground">
                     <Phone className="h-3 w-3" />
                     <span>Phone</span>
                   </div>
                 )}
-                {therapist.sessionTypes.includes("in-person") && (
+                {therapist.sessionTypes.includes(SessionType.IN_PERSON) && (
                   <div className="flex items-center space-x-1 text-xs text-muted-foreground">
                     <MessageCircle className="h-3 w-3" />
                     <span>In-person</span>
@@ -125,9 +131,6 @@ export function TherapistCard({ therapist }: TherapistCardProps) {
                   <span className="text-sm text-muted-foreground">/session</span>
                 </div>
                 <div className="flex space-x-2">
-                  <Button variant="outline" size="sm">
-                    View Profile
-                  </Button>
                   <Button size="sm" onClick={() => setShowBookingModal(true)}>
                     Book Now
                   </Button>
