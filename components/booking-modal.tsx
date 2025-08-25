@@ -56,7 +56,7 @@ export function BookingModal({ isOpen, onClose, therapist }: BookingModalProps) 
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+      <DialogContent showCloseButton={false} className="max-w-5xl sm:max-w-6xl w-[95vw] max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="flex items-center justify-between">
             <span>Book Appointment</span>
@@ -72,8 +72,8 @@ export function BookingModal({ isOpen, onClose, therapist }: BookingModalProps) 
             sessionTypes={therapist.sessionTypes}
             pricePerSession={therapist.pricePerSession}
             onTimeSelect={handleTimeSelect}
-            selectedDate={selectedDate}
-            selectedTime={selectedTime}
+            selectedDate={selectedDate || undefined}
+            selectedTime={selectedTime || undefined}
           />
 
           {selectedDate && selectedTime && (

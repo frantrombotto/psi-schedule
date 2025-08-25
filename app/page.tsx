@@ -1,12 +1,14 @@
 "use client"
 
 import { useState, useMemo } from "react"
-import { Search, MapPin, Filter, X } from "lucide-react"
+import { Search, Filter, X } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
 import { TherapistCard } from "@/components/therapist-card"
 import { FilterPanel } from "@/components/filter-panel"
+import { SessionType } from "@/components/therapist-card"
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 
 const sampleTherapists = [
   {
@@ -21,7 +23,7 @@ const sampleTherapists = [
     nextAvailable: "Today 3:00 PM",
     avatar: "/professional-woman-therapist.png",
     acceptsInsurance: true,
-    sessionTypes: ["video", "in-person"],
+    sessionTypes: [SessionType.VIDEO, SessionType.IN_PERSON],
     languages: ["English", "Spanish"],
     yearsExperience: 12,
   },
@@ -37,7 +39,7 @@ const sampleTherapists = [
     nextAvailable: "Tomorrow 10:00 AM",
     avatar: "/professional-asian-male-therapist.png",
     acceptsInsurance: false,
-    sessionTypes: ["video", "in-person", "phone"],
+    sessionTypes: [SessionType.VIDEO, SessionType.IN_PERSON, SessionType.PHONE],
     languages: ["English", "Mandarin"],
     yearsExperience: 8,
   },
@@ -53,7 +55,7 @@ const sampleTherapists = [
     nextAvailable: "Monday 2:00 PM",
     avatar: "/professional-latina-female-therapist.png",
     acceptsInsurance: true,
-    sessionTypes: ["video", "in-person"],
+    sessionTypes: [SessionType.VIDEO, SessionType.IN_PERSON],
     languages: ["English", "Spanish"],
     yearsExperience: 15,
   },
@@ -69,7 +71,7 @@ const sampleTherapists = [
     nextAvailable: "Wednesday 4:00 PM",
     avatar: "/professional-black-male-therapist.png",
     acceptsInsurance: true,
-    sessionTypes: ["video", "phone"],
+    sessionTypes: [SessionType.VIDEO, SessionType.PHONE],
     languages: ["English"],
     yearsExperience: 10,
   },
@@ -85,7 +87,7 @@ const sampleTherapists = [
     nextAvailable: "Friday 11:00 AM",
     avatar: "/professional-blonde-female-therapist.png",
     acceptsInsurance: false,
-    sessionTypes: ["video", "in-person"],
+    sessionTypes: [SessionType.VIDEO, SessionType.IN_PERSON],
     languages: ["English"],
     yearsExperience: 9,
   },
@@ -101,7 +103,7 @@ const sampleTherapists = [
     nextAvailable: "Today 6:00 PM",
     avatar: "/professional-korean-male-therapist.png",
     acceptsInsurance: true,
-    sessionTypes: ["video", "in-person", "phone"],
+    sessionTypes: [SessionType.VIDEO, SessionType.IN_PERSON, SessionType.PHONE],
     languages: ["English", "Korean"],
     yearsExperience: 7,
   },
@@ -109,11 +111,10 @@ const sampleTherapists = [
 
 export default function HomePage() {
   const [searchQuery, setSearchQuery] = useState("")
-  const [locationQuery, setLocationQuery] = useState("")
-  const [showFilters, setShowFilters] = useState(false)
+  const [filtersOpen, setFiltersOpen] = useState(false)
   const [filters, setFilters] = useState({
     specialties: [],
-    priceRange: [50, 300],
+    priceRange: [50, 300] as [number, number],
     acceptsInsurance: null,
     sessionTypes: [],
     languages: [],
@@ -129,12 +130,6 @@ export default function HomePage() {
         const matchesSpecialty = therapist.specialties.some((s) => s.toLowerCase().includes(query))
         const matchesCredentials = therapist.credentials.toLowerCase().includes(query)
         if (!matchesName && !matchesSpecialty && !matchesCredentials) return false
-      }
-
-      // Location search
-      if (locationQuery) {
-        const location = locationQuery.toLowerCase()
-        if (!therapist.location.toLowerCase().includes(location)) return false
       }
 
       // Specialty filter
@@ -170,7 +165,7 @@ export default function HomePage() {
 
       return true
     })
-  }, [searchQuery, locationQuery, filters])
+  }, [searchQuery, filters])
 
   const getActiveFilterCount = () => {
     let count = 0
@@ -197,14 +192,11 @@ export default function HomePage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center space-x-4">
-              <h1 className="text-xl font-bold">TherapyConnect</h1>
+              <h1 className="text-xl font-bold">Psi Mammoliti</h1>
             </div>
             <nav className="hidden md:flex items-center space-x-6">
               <a href="#" className="hover:text-primary-foreground/80 transition-colors">
                 Find Therapists
-              </a>
-              <a href="#" className="hover:text-primary-foreground/80 transition-colors">
-                How it Works
               </a>
               <a href="#" className="hover:text-primary-foreground/80 transition-colors">
                 About
@@ -236,15 +228,6 @@ export default function HomePage() {
                   onChange={(e) => setSearchQuery(e.target.value)}
                 />
               </div>
-              <div className="flex-1 relative">
-                <MapPin className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
-                <Input
-                  placeholder="Location or ZIP code"
-                  className="pl-10 h-12"
-                  value={locationQuery}
-                  onChange={(e) => setLocationQuery(e.target.value)}
-                />
-              </div>
               <Button size="lg" className="h-12 px-8">
                 Search
               </Button>
@@ -257,20 +240,30 @@ export default function HomePage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center space-x-4">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setShowFilters(!showFilters)}
-                className={getActiveFilterCount() > 0 ? "bg-primary/10 border-primary" : ""}
-              >
-                <Filter className="h-4 w-4 mr-2" />
-                Filters
-                {getActiveFilterCount() > 0 && (
-                  <Badge variant="secondary" className="ml-2 h-5 w-5 p-0 flex items-center justify-center text-xs">
-                    {getActiveFilterCount()}
-                  </Badge>
-                )}
-              </Button>
+              <Popover open={filtersOpen} onOpenChange={setFiltersOpen}>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className={getActiveFilterCount() > 0 ? "bg-primary/10 border-primary" : ""}
+                  >
+                    <Filter className="h-4 w-4 mr-2" />
+                    Filters
+                    {getActiveFilterCount() > 0 && (
+                      <Badge variant="secondary" className="ml-2 h-5 w-5 p-0 flex items-center justify-center text-xs">
+                        {getActiveFilterCount()}
+                      </Badge>
+                    )}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="p-0">
+                  <FilterPanel
+                    filters={filters}
+                    onFiltersChange={setFilters}
+                    onClose={() => setFiltersOpen(false)}
+                  />
+                </PopoverContent>
+              </Popover>
               <div className="hidden md:flex items-center space-x-2">
                 {filters.specialties.slice(0, 4).map((specialty) => (
                   <Badge key={specialty} variant="secondary" className="flex items-center space-x-1">
@@ -291,11 +284,7 @@ export default function HomePage() {
             </p>
           </div>
 
-          {showFilters && (
-            <div className="flex justify-start mb-4">
-              <FilterPanel filters={filters} onFiltersChange={setFilters} onClose={() => setShowFilters(false)} />
-            </div>
-          )}
+          {/* Filters now appear in a Popover; no inline panel here to avoid layout shift */}
         </div>
       </section>
 
@@ -308,7 +297,6 @@ export default function HomePage() {
                 variant="outline"
                 onClick={() => {
                   setSearchQuery("")
-                  setLocationQuery("")
                   setFilters({
                     specialties: [],
                     priceRange: [50, 300],
