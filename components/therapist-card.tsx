@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { Star, Clock, MapPin, Phone, Video, MessageCircle } from "lucide-react"
+import { Star, Clock, MapPin, Phone, Video, MessageCircle, Laptop, Home } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
@@ -9,9 +9,8 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { BookingModal } from "./booking-modal"
 
 export enum SessionType {
-  VIDEO = "Video",
-  PHONE = "Teléfono",
-  IN_PERSON = "En persona",
+  VIDEO = "Online",
+  IN_PERSON = "Presencial",
 }
 
 interface TherapistCardProps {
@@ -89,20 +88,14 @@ export function TherapistCard({ therapist }: TherapistCardProps) {
               <div className="flex items-center space-x-2 mb-3">
                 {therapist.sessionTypes.includes(SessionType.VIDEO) && (
                   <div className="flex items-center space-x-1 text-xs text-muted-foreground">
-                    <Video className="h-3 w-3" />
-                    <span>Video</span>
-                  </div>
-                )}
-                {therapist.sessionTypes.includes(SessionType.PHONE) && (
-                  <div className="flex items-center space-x-1 text-xs text-muted-foreground">
-                    <Phone className="h-3 w-3" />
-                    <span>Teléfono</span>
+                    <Laptop className="h-3 w-3" />
+                    <span>Online</span>
                   </div>
                 )}
                 {therapist.sessionTypes.includes(SessionType.IN_PERSON) && (
                   <div className="flex items-center space-x-1 text-xs text-muted-foreground">
-                    <MessageCircle className="h-3 w-3" />
-                    <span>In-person</span>
+                    <Home className="h-3 w-3" />
+                    <span>Presencial</span>
                   </div>
                 )}
               </div>

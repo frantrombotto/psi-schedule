@@ -130,11 +130,9 @@ export function SchedulingCalendar({
   const getSessionTypeIcon = (type: SessionType) => {
     switch (type) {
       case SessionType.VIDEO:
-        return "📹"
-      case SessionType.PHONE:
-        return "📞"
+        return "💻"
       case SessionType.IN_PERSON:
-        return "🏢"
+        return "🏡"
       default:
         return ""
     }
