@@ -5,23 +5,24 @@ import { ChevronLeft, ChevronRight, Clock, CalendarIcon } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { cn } from "@/lib/utils"
+import { SessionType } from "./therapist-card"
 
 interface TimeSlot {
   time: string
   available: boolean
-  sessionType: "video" | "in-person" | "phone"
+  sessionType: SessionType
 }
 
 interface SchedulingCalendarProps {
   therapistName: string
-  sessionTypes: ("video" | "in-person" | "phone")[]
+  sessionTypes: SessionType[]
   pricePerSession: number
   onTimeSelect: (date: Date, timeSlot: TimeSlot) => void
   selectedDate?: Date
   selectedTime?: TimeSlot
 }
 
-const generateTimeSlots = (sessionTypes: ("video" | "in-person" | "phone")[]): TimeSlot[] => {
+const generateTimeSlots = (sessionTypes: SessionType[]): TimeSlot[] => {
   const baseSlots = [
     "9:00 AM",
     "9:30 AM",
@@ -98,21 +99,7 @@ export function SchedulingCalendar({
   const [timeSlots, setTimeSlots] = useState<TimeSlot[]>([])
 
   const days = getDaysInMonth(currentDate)
-  const monthNames = [
-    "January",
-    "February",
-    "March",
-    "April",
-    "May",
-    "June",
-    "July",
-    "August",
-    "September",
-    "October",
-    "November",
-    "December",
-  ]
-  const dayNames = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
+  const dayNames = ["Dom", "Lun", "Mar", "Mie", "Jue", "Vie", "Sab"]
 
   const handleDateClick = (date: Date) => {
     if (!isDateAvailable(date)) return
@@ -140,13 +127,13 @@ export function SchedulingCalendar({
     setTimeSlots([])
   }
 
-  const getSessionTypeIcon = (type: "video" | "in-person" | "phone") => {
+  const getSessionTypeIcon = (type: SessionType) => {
     switch (type) {
-      case "video":
+      case SessionType.VIDEO:
         return "📹"
-      case "phone":
+      case SessionType.PHONE:
         return "📞"
-      case "in-person":
+      case SessionType.IN_PERSON:
         return "🏢"
       default:
         return ""
@@ -157,13 +144,13 @@ export function SchedulingCalendar({
     <div className="space-y-6">
       {/* Calendar Header */}
       <div className="flex items-center justify-between">
-        <h3 className="text-lg font-semibold">Schedule with {therapistName}</h3>
+        <h3 className="text-lg font-semibold">Agenda con {therapistName}</h3>
         <div className="flex items-center space-x-2">
           <Button variant="outline" size="sm" onClick={() => navigateMonth("prev")}>
             <ChevronLeft className="h-4 w-4" />
           </Button>
           <span className="text-sm font-medium min-w-32 text-center">
-            {monthNames[currentDate.getMonth()]} {currentDate.getFullYear()}
+            {currentDate.toLocaleString("es-ES", { month: "long" }).charAt(0).toUpperCase() + currentDate.toLocaleString("es-ES", { month: "long" }).slice(1)} {currentDate.getFullYear()}
           </span>
           <Button variant="outline" size="sm" onClick={() => navigateMonth("next")}>
             <ChevronRight className="h-4 w-4" />
@@ -177,7 +164,7 @@ export function SchedulingCalendar({
           <CardHeader className="pb-4">
             <CardTitle className="text-base flex items-center space-x-2">
               <CalendarIcon className="h-4 w-4" />
-              <span>Select Date</span>
+              <span>Seleccioná una fecha</span>
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -222,8 +209,8 @@ export function SchedulingCalendar({
             </div>
 
             <div className="mt-4 text-xs text-muted-foreground">
-              <p>• Available dates are clickable</p>
-              <p>• Weekends are not available</p>
+              <p>• Las fechas disponibles son clickeables</p>
+              <p>• Los fines de semana no están disponibles</p>
             </div>
           </CardContent>
         </Card>
@@ -235,12 +222,12 @@ export function SchedulingCalendar({
               <Clock className="h-4 w-4" />
               <span>
                 {viewingDate
-                  ? `Available Times - ${viewingDate.toLocaleDateString("en-US", {
-                      weekday: "long",
-                      month: "long",
-                      day: "numeric",
-                    })}`
-                  : "Select a date to see available times"}
+                  ? `Horarios disponibles - ${viewingDate.toLocaleDateString("es-ES", {
+                    weekday: "long",
+                    month: "long",
+                    day: "numeric",
+                  })}`
+                  : "Seleccioná una fecha para ver los horarios disponibles"}
               </span>
             </CardTitle>
           </CardHeader>
@@ -269,19 +256,19 @@ export function SchedulingCalendar({
                     ))}
                   </div>
                 ) : (
-                  <p className="text-sm text-muted-foreground text-center py-8">No available times for this date</p>
+                  <p className="text-sm text-muted-foreground text-center py-8">No hay horarios disponibles para esta fecha</p>
                 )}
 
                 {timeSlots.some((slot) => slot.available) && (
                   <div className="mt-4 p-3 bg-muted rounded-md">
                     <div className="flex items-center justify-between text-sm">
-                      <span>Session Fee:</span>
+                      <span>Costo de la sesión:</span>
                       <span className="font-semibold">${pricePerSession}</span>
                     </div>
                     <div className="flex items-center space-x-4 mt-2 text-xs text-muted-foreground">
                       <span>📹 Video</span>
-                      <span>📞 Phone</span>
-                      <span>🏢 In-person</span>
+                      <span>📞 Teléfono</span>
+                      <span>🏢 En persona</span>
                     </div>
                   </div>
                 )}
@@ -289,7 +276,7 @@ export function SchedulingCalendar({
             ) : (
               <div className="text-center py-12 text-muted-foreground">
                 <CalendarIcon className="h-12 w-12 mx-auto mb-4 opacity-50" />
-                <p>Please select a date from the calendar to view available appointment times.</p>
+                <p>Selecciona una fecha del calendario para ver los horarios disponibles.</p>
               </div>
             )}
           </CardContent>
