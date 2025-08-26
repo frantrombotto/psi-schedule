@@ -46,7 +46,7 @@ const availableSpecialties = [
   "Mindfulness",
 ];
 
-const availableSessionTypes = [SessionType.VIDEO, SessionType.IN_PERSON, SessionType.PHONE]
+const availableSessionTypes = [SessionType.VIDEO, SessionType.IN_PERSON]
 const availableLanguages = ["Español", "Inglés", "Portugués"]
 
 export function FilterPanel({ filters, onFiltersChange, onClose }: FilterPanelProps) {
@@ -113,6 +113,28 @@ export function FilterPanel({ filters, onFiltersChange, onClose }: FilterPanelPr
         </div>
       </CardHeader>
       <CardContent className="space-y-4 max-h-96 overflow-y-auto">
+        {/* Session Types */}
+        <Collapsible open={openSections.sessionTypes} onOpenChange={() => toggleSection("sessionTypes")}>
+          <CollapsibleTrigger className="flex items-center justify-between w-full">
+            <Label className="text-sm font-medium">Tipo de sesión</Label>
+            {openSections.sessionTypes ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+          </CollapsibleTrigger>
+          <CollapsibleContent className="space-y-2 mt-2">
+            {availableSessionTypes.map((type) => (
+              <div key={type} className="flex items-center space-x-2">
+                <Checkbox
+                  id={type}
+                  checked={filters.sessionTypes.includes(type)}
+                  onCheckedChange={() => toggleSessionType(type)}
+                />
+                <Label htmlFor={type} className="text-sm capitalize">
+                  {type.replace("-", " ")}
+                </Label>
+              </div>
+            ))}
+          </CollapsibleContent>
+        </Collapsible>
+
         {/* Specialties */}
         <Collapsible open={openSections.specialties} onOpenChange={() => toggleSection("specialties")}>
           <CollapsibleTrigger className="flex items-center justify-between w-full">
@@ -186,28 +208,6 @@ export function FilterPanel({ filters, onFiltersChange, onClose }: FilterPanelPr
                 Atención particular
               </Label>
             </div>
-          </CollapsibleContent>
-        </Collapsible>
-
-        {/* Session Types */}
-        <Collapsible open={openSections.sessionTypes} onOpenChange={() => toggleSection("sessionTypes")}>
-          <CollapsibleTrigger className="flex items-center justify-between w-full">
-            <Label className="text-sm font-medium">Tipo de sesión</Label>
-            {openSections.sessionTypes ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
-          </CollapsibleTrigger>
-          <CollapsibleContent className="space-y-2 mt-2">
-            {availableSessionTypes.map((type) => (
-              <div key={type} className="flex items-center space-x-2">
-                <Checkbox
-                  id={type}
-                  checked={filters.sessionTypes.includes(type)}
-                  onCheckedChange={() => toggleSessionType(type)}
-                />
-                <Label htmlFor={type} className="text-sm capitalize">
-                  {type.replace("-", " ")}
-                </Label>
-              </div>
-            ))}
           </CollapsibleContent>
         </Collapsible>
 
