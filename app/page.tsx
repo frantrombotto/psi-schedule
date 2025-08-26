@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useMemo, useEffect } from "react"
-import { Search, Filter, X } from "lucide-react"
+import { Search, Filter, X, Loader2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
@@ -177,8 +177,15 @@ export default function HomePage() {
                   onChange={(e) => setSearchQuery(e.target.value)}
                 />
               </div>
-              <Button size="lg" className="h-12 px-8" onClick={() => fetchTherapists(searchQuery)}>
-                Buscar
+              <Button size="lg" className="h-12 px-8" onClick={() => fetchTherapists(searchQuery)} disabled={isLoading}>
+                {isLoading ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Buscando...
+                  </>
+                ) : (
+                  "Buscar"
+                )}
               </Button>
             </div>
           </div>
@@ -229,7 +236,11 @@ export default function HomePage() {
               </div>
             </div>
             <p className="text-sm text-muted-foreground">
-              Mostrando {filteredTherapists.length} psicólogo{filteredTherapists.length !== 1 ? "s" : ""}
+              {isLoading
+                ? "Cargando..."
+                : apiError
+                ? "Ocurrió un error al cargar los psicólogos"
+                : `Mostrando ${filteredTherapists.length} psicólogo${filteredTherapists.length !== 1 ? "s" : ""}`}
             </p>
           </div>
 
@@ -239,7 +250,30 @@ export default function HomePage() {
 
       <section className="py-8">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          {filteredTherapists.length === 0 ? (
+          {isLoading ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {Array.from({ length: 6 }).map((_, i) => (
+                <div key={i} className="bg-card rounded-xl border p-6 animate-pulse">
+                  <div className="flex items-start space-x-4">
+                    <div className="h-16 w-16 rounded-full bg-muted" />
+                    <div className="flex-1 space-y-3">
+                      <div className="h-4 w-1/3 bg-muted rounded" />
+                      <div className="h-3 w-2/3 bg-muted rounded" />
+                      <div className="h-3 w-1/2 bg-muted rounded" />
+                      <div className="h-8 w-full bg-muted rounded" />
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : apiError ? (
+            <div className="text-center py-12">
+              <p className="text-lg text-destructive mb-4">{apiError}</p>
+              <Button variant="outline" onClick={() => fetchTherapists(searchQuery)}>
+                Reintentar
+              </Button>
+            </div>
+          ) : filteredTherapists.length === 0 ? (
             <div className="text-center py-12">
               <p className="text-lg text-muted-foreground mb-4">No se encontraron psicólogos que coincidan con tus criterios.</p>
               <Button
