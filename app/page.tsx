@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useMemo } from "react"
+import { useState, useMemo, useEffect } from "react"
 import { Search, Filter, X } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -10,108 +10,29 @@ import { FilterPanel } from "@/components/filter-panel"
 import { SessionType } from "@/components/therapist-card"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 
-const sampleTherapists = [
-  {
-    id: "1",
-    name: "Lic. Sofía Martínez",
-    credentials: "Licenciada en Psicología, Mat. N° 23456 (Colegio de Psicólogos CABA)",
-    specialties: ["Ansiedad", "Depresión", "Trauma", "Trastorno por Estrés Postraumático (TEPT)"],
-    rating: 4.9,
-    reviewCount: 127,
-    pricePerSession: 150,
-    location: "Palermo, Ciudad de Buenos Aires",
-    nextAvailable: "Hoy 15:00",
-    avatar: "/professional-woman-therapist.png",
-    acceptsInsurance: true,
-    sessionTypes: [SessionType.VIDEO, SessionType.IN_PERSON],
-    languages: ["Español", "Inglés"],
-    yearsExperience: 12,
-  },
-  {
-    id: "2",
-    name: "Lic. Martín Chen",
-    credentials: "Licenciado en Psicología, Especialista en Terapia Familiar, Mat. N° 34567 (Colegio de Psicólogos PBA)",
-    specialties: ["Terapia de pareja", "Terapia familiar", "Comunicación"],
-    rating: 4.8,
-    reviewCount: 89,
-    pricePerSession: 180,
-    location: "San Isidro, Provincia de Buenos Aires",
-    nextAvailable: "Mañana 10:00",
-    avatar: "/professional-asian-male-therapist.png",
-    acceptsInsurance: false,
-    sessionTypes: [SessionType.VIDEO, SessionType.IN_PERSON],
-    languages: ["Español", "Portugués"],
-    yearsExperience: 8,
-  },
-  {
-    id: "3",
-    name: "Dra. Emilia Rodríguez",
-    credentials: "Doctora en Psicología, Mat. N° 45678 (Colegio de Psicólogos de Córdoba)",
-    specialties: ["TDAH", "Autismo", "Terapia infantil", "Problemas conductuales"],
-    rating: 4.9,
-    reviewCount: 156,
-    pricePerSession: 120,
-    location: "Córdoba, Córdoba",
-    nextAvailable: "Lunes 14:00",
-    avatar: "/professional-latina-female-therapist.png",
-    acceptsInsurance: true,
-    sessionTypes: [SessionType.VIDEO, SessionType.IN_PERSON],
-    languages: ["Español", "Inglés"],
-    yearsExperience: 15,
-  },
-  {
-    id: "4",
-    name: "Lic. Juan Pérez",
-    credentials: "Psicólogo Clínico, Mat. N° 56789 (Colegio de Psicólogos de Rosario)",
-    specialties: ["Adicciones", "Abuso de sustancias", "Manejo de la ira"],
-    rating: 4.7,
-    reviewCount: 73,
-    pricePerSession: 140,
-    location: "Rosario, Santa Fe",
-    nextAvailable: "Miércoles 16:00",
-    avatar: "/professional-black-male-therapist.png",
-    acceptsInsurance: true,
-    sessionTypes: [SessionType.VIDEO],
-    languages: ["Español"],
-    yearsExperience: 10,
-  },
-  {
-    id: "5",
-    name: "Lic. Lucía Gómez",
-    credentials: "Licenciada en Psicología, Mat. N° 67890 (Colegio de Psicólogos de La Plata)",
-    specialties: ["Trastornos alimentarios", "Imagen corporal", "Autoestima"],
-    rating: 4.8,
-    reviewCount: 94,
-    pricePerSession: 160,
-    location: "Mar del Plata, Provincia de Buenos Aires",
-    nextAvailable: "Viernes 11:00",
-    avatar: "/professional-blonde-female-therapist.png",
-    acceptsInsurance: false,
-    sessionTypes: [SessionType.VIDEO, SessionType.IN_PERSON],
-    languages: ["Español"],
-    yearsExperience: 9,
-  },
-  {
-    id: "6",
-    name: "Lic. Diego Kim",
-    credentials: "Licenciado en Psicología, Mat. N° 78901 (Colegio de Psicólogos CABA)",
-    specialties: ["Ansiedad", "TOC", "Trastornos de pánico", "Mindfulness"],
-    rating: 4.9,
-    reviewCount: 112,
-    pricePerSession: 135,
-    location: "Belgrano, Ciudad de Buenos Aires",
-    nextAvailable: "Hoy 18:00",
-    avatar: "/professional-korean-male-therapist.png",
-    acceptsInsurance: true,
-    sessionTypes: [SessionType.VIDEO, SessionType.IN_PERSON],
-    languages: ["Español", "Inglés"],
-    yearsExperience: 7,
-  },
-];
+type Therapist = {
+  id: string
+  name: string
+  credentials: string
+  specialties: string[]
+  rating: number
+  reviewCount: number
+  pricePerSession: number
+  location: string
+  nextAvailable: string
+  avatar: string
+  acceptsInsurance: boolean
+  sessionTypes: SessionType[]
+  languages: string[]
+  yearsExperience: number
+}
 
 
 export default function HomePage() {
   const [searchQuery, setSearchQuery] = useState("")
+  const [therapists, setTherapists] = useState<Therapist[]>([])
+  const [isLoading, setIsLoading] = useState(false)
+  const [apiError, setApiError] = useState<string | null>(null)
   const [filtersOpen, setFiltersOpen] = useState(false)
   const [filters, setFilters] = useState({
     specialties: [],
@@ -123,7 +44,7 @@ export default function HomePage() {
   })
 
   const filteredTherapists = useMemo(() => {
-    return sampleTherapists.filter((therapist) => {
+    return therapists.filter((therapist) => {
       // Text search
       if (searchQuery) {
         const query = searchQuery.toLowerCase()
@@ -166,7 +87,34 @@ export default function HomePage() {
 
       return true
     })
-  }, [searchQuery, filters])
+  }, [searchQuery, filters, therapists])
+
+  const fetchTherapists = async (query: string) => {
+    setIsLoading(true)
+    setApiError(null)
+    try {
+      const url = new URL("/api/therapists", window.location.origin)
+      if (query.trim()) url.searchParams.set("search", query.trim())
+      const res = await fetch(url.toString(), { cache: "no-store" })
+      if (!res.ok) throw new Error(`HTTP ${res.status}`)
+      const json = await res.json()
+      const data = (json?.data || []).map((t: any) => ({
+        ...t,
+        sessionTypes: t.sessionTypes || [],
+        nextAvailable: t.nextAvailable ?? "",
+      })) as Therapist[]
+      setTherapists(data)
+    } catch (err: any) {
+      setApiError(err?.message || "Error fetching therapists")
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  useEffect(() => {
+    fetchTherapists("")
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   const getActiveFilterCount = () => {
     let count = 0
@@ -229,7 +177,7 @@ export default function HomePage() {
                   onChange={(e) => setSearchQuery(e.target.value)}
                 />
               </div>
-              <Button size="lg" className="h-12 px-8">
+              <Button size="lg" className="h-12 px-8" onClick={() => fetchTherapists(searchQuery)}>
                 Buscar
               </Button>
             </div>
