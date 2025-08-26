@@ -5,11 +5,12 @@ import { X } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { SchedulingCalendar } from "./scheduling-calendar"
+import { SessionType } from "./therapist-card"
 
 interface TimeSlot {
   time: string
   available: boolean
-  sessionType: "video" | "in-person" | "phone"
+  sessionType: SessionType
 }
 
 interface BookingModalProps {
@@ -20,7 +21,7 @@ interface BookingModalProps {
     name: string
     credentials: string
     pricePerSession: number
-    sessionTypes: ("video" | "in-person" | "phone")[]
+    sessionTypes: SessionType[]
     avatar: string
   }
 }
@@ -45,7 +46,7 @@ export function BookingModal({ isOpen, onClose, therapist }: BookingModalProps) 
       })
 
       // For now, just show an alert
-      alert(`Appointment booked with ${therapist.name} on ${selectedDate.toLocaleDateString()} at ${selectedTime.time}`)
+      alert(`Cita agendada con ${therapist.name} el ${selectedDate.toLocaleDateString()} a las ${selectedTime.time}`)
       onClose()
 
       // Reset selections
@@ -59,7 +60,7 @@ export function BookingModal({ isOpen, onClose, therapist }: BookingModalProps) 
       <DialogContent showCloseButton={false} className="max-w-5xl sm:max-w-6xl w-[95vw] max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="flex items-center justify-between">
-            <span>Book Appointment</span>
+            <span>Agendar cita</span>
             <Button variant="ghost" size="sm" onClick={onClose}>
               <X className="h-4 w-4" />
             </Button>
@@ -79,14 +80,14 @@ export function BookingModal({ isOpen, onClose, therapist }: BookingModalProps) 
           {selectedDate && selectedTime && (
             <div className="border-t pt-6">
               <div className="bg-muted p-4 rounded-lg mb-4">
-                <h4 className="font-semibold mb-2">Appointment Summary</h4>
+                <h4 className="font-semibold mb-2">Resumen de la cita</h4>
                 <div className="space-y-1 text-sm">
                   <p>
-                    <strong>Therapist:</strong> {therapist.name}
+                    <strong>Psicólogo:</strong> {therapist.name}
                   </p>
                   <p>
-                    <strong>Date:</strong>{" "}
-                    {selectedDate.toLocaleDateString("en-US", {
+                    <strong>Fecha:</strong>{" "}
+                    {selectedDate.toLocaleDateString("es-ES", {
                       weekday: "long",
                       year: "numeric",
                       month: "long",
@@ -94,22 +95,22 @@ export function BookingModal({ isOpen, onClose, therapist }: BookingModalProps) 
                     })}
                   </p>
                   <p>
-                    <strong>Time:</strong> {selectedTime.time}
+                    <strong>Hora:</strong> {selectedTime.time}
                   </p>
                   <p>
-                    <strong>Session Type:</strong> {selectedTime.sessionType}
+                    <strong>Tipo de sesión:</strong> {selectedTime.sessionType}
                   </p>
                   <p>
-                    <strong>Fee:</strong> ${therapist.pricePerSession}
+                    <strong>Costo de la sesión:</strong> ${therapist.pricePerSession}
                   </p>
                 </div>
               </div>
 
               <div className="flex justify-end space-x-3">
                 <Button variant="outline" onClick={onClose}>
-                  Cancel
+                  Cancelar
                 </Button>
-                <Button onClick={handleBooking}>Confirm Booking</Button>
+                <Button onClick={handleBooking}>Confirmar reserva</Button>
               </div>
             </div>
           )}

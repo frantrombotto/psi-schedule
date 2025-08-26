@@ -13,101 +13,102 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 const sampleTherapists = [
   {
     id: "1",
-    name: "Dr. Sarah Martinez",
-    credentials: "Licensed Clinical Psychologist, PhD",
-    specialties: ["Anxiety", "Depression", "Trauma", "PTSD"],
+    name: "Lic. Sofía Martínez",
+    credentials: "Licenciada en Psicología, Mat. N° 23456 (Colegio de Psicólogos CABA)",
+    specialties: ["Ansiedad", "Depresión", "Trauma", "Trastorno por Estrés Postraumático (TEPT)"],
     rating: 4.9,
     reviewCount: 127,
     pricePerSession: 150,
-    location: "Manhattan, NY",
-    nextAvailable: "Today 3:00 PM",
+    location: "Palermo, Ciudad de Buenos Aires",
+    nextAvailable: "Hoy 15:00",
     avatar: "/professional-woman-therapist.png",
     acceptsInsurance: true,
     sessionTypes: [SessionType.VIDEO, SessionType.IN_PERSON],
-    languages: ["English", "Spanish"],
+    languages: ["Español", "Inglés"],
     yearsExperience: 12,
   },
   {
     id: "2",
-    name: "Dr. Michael Chen",
-    credentials: "Licensed Marriage & Family Therapist, LMFT",
-    specialties: ["Couples Therapy", "Family Therapy", "Communication"],
+    name: "Lic. Martín Chen",
+    credentials: "Licenciado en Psicología, Especialista en Terapia Familiar, Mat. N° 34567 (Colegio de Psicólogos PBA)",
+    specialties: ["Terapia de pareja", "Terapia familiar", "Comunicación"],
     rating: 4.8,
     reviewCount: 89,
     pricePerSession: 180,
-    location: "Brooklyn, NY",
-    nextAvailable: "Tomorrow 10:00 AM",
+    location: "San Isidro, Provincia de Buenos Aires",
+    nextAvailable: "Mañana 10:00",
     avatar: "/professional-asian-male-therapist.png",
     acceptsInsurance: false,
     sessionTypes: [SessionType.VIDEO, SessionType.IN_PERSON, SessionType.PHONE],
-    languages: ["English", "Mandarin"],
+    languages: ["Español", "Portugués"],
     yearsExperience: 8,
   },
   {
     id: "3",
-    name: "Dr. Emily Rodriguez",
-    credentials: "Licensed Clinical Social Worker, LCSW",
-    specialties: ["ADHD", "Autism", "Child Therapy", "Behavioral Issues"],
+    name: "Dra. Emilia Rodríguez",
+    credentials: "Doctora en Psicología, Mat. N° 45678 (Colegio de Psicólogos de Córdoba)",
+    specialties: ["TDAH", "Autismo", "Terapia infantil", "Problemas conductuales"],
     rating: 4.9,
     reviewCount: 156,
     pricePerSession: 120,
-    location: "Queens, NY",
-    nextAvailable: "Monday 2:00 PM",
+    location: "Córdoba, Córdoba",
+    nextAvailable: "Lunes 14:00",
     avatar: "/professional-latina-female-therapist.png",
     acceptsInsurance: true,
     sessionTypes: [SessionType.VIDEO, SessionType.IN_PERSON],
-    languages: ["English", "Spanish"],
+    languages: ["Español", "Inglés"],
     yearsExperience: 15,
   },
   {
     id: "4",
-    name: "Dr. James Wilson",
-    credentials: "Licensed Professional Counselor, LPC",
-    specialties: ["Addiction", "Substance Abuse", "Men's Issues", "Anger Management"],
+    name: "Lic. Juan Pérez",
+    credentials: "Psicólogo Clínico, Mat. N° 56789 (Colegio de Psicólogos de Rosario)",
+    specialties: ["Adicciones", "Abuso de sustancias", "Manejo de la ira"],
     rating: 4.7,
     reviewCount: 73,
     pricePerSession: 140,
-    location: "Bronx, NY",
-    nextAvailable: "Wednesday 4:00 PM",
+    location: "Rosario, Santa Fe",
+    nextAvailable: "Miércoles 16:00",
     avatar: "/professional-black-male-therapist.png",
     acceptsInsurance: true,
     sessionTypes: [SessionType.VIDEO, SessionType.PHONE],
-    languages: ["English"],
+    languages: ["Español"],
     yearsExperience: 10,
   },
   {
     id: "5",
-    name: "Dr. Lisa Thompson",
-    credentials: "Licensed Clinical Psychologist, PsyD",
-    specialties: ["Eating Disorders", "Body Image", "Women's Issues", "Self-Esteem"],
+    name: "Lic. Lucía Gómez",
+    credentials: "Licenciada en Psicología, Mat. N° 67890 (Colegio de Psicólogos de La Plata)",
+    specialties: ["Trastornos alimentarios", "Imagen corporal", "Autoestima"],
     rating: 4.8,
     reviewCount: 94,
     pricePerSession: 160,
-    location: "Staten Island, NY",
-    nextAvailable: "Friday 11:00 AM",
+    location: "Mar del Plata, Provincia de Buenos Aires",
+    nextAvailable: "Viernes 11:00",
     avatar: "/professional-blonde-female-therapist.png",
     acceptsInsurance: false,
     sessionTypes: [SessionType.VIDEO, SessionType.IN_PERSON],
-    languages: ["English"],
+    languages: ["Español"],
     yearsExperience: 9,
   },
   {
     id: "6",
-    name: "Dr. David Kim",
-    credentials: "Licensed Mental Health Counselor, LMHC",
-    specialties: ["Anxiety", "OCD", "Panic Disorders", "Mindfulness"],
+    name: "Lic. Diego Kim",
+    credentials: "Licenciado en Psicología, Mat. N° 78901 (Colegio de Psicólogos CABA)",
+    specialties: ["Ansiedad", "TOC", "Trastornos de pánico", "Mindfulness"],
     rating: 4.9,
     reviewCount: 112,
     pricePerSession: 135,
-    location: "Manhattan, NY",
-    nextAvailable: "Today 6:00 PM",
+    location: "Belgrano, Ciudad de Buenos Aires",
+    nextAvailable: "Hoy 18:00",
     avatar: "/professional-korean-male-therapist.png",
     acceptsInsurance: true,
     sessionTypes: [SessionType.VIDEO, SessionType.IN_PERSON, SessionType.PHONE],
-    languages: ["English", "Korean"],
+    languages: ["Español", "Inglés"],
     yearsExperience: 7,
   },
-]
+];
+
 
 export default function HomePage() {
   const [searchQuery, setSearchQuery] = useState("")
@@ -196,13 +197,13 @@ export default function HomePage() {
             </div>
             <nav className="hidden md:flex items-center space-x-6">
               <a href="#" className="hover:text-primary-foreground/80 transition-colors">
-                Find Therapists
+                Encuentra tu psicólogo
               </a>
               <a href="#" className="hover:text-primary-foreground/80 transition-colors">
-                About
+                Acerca de nosotros
               </a>
               <Button variant="secondary" size="sm">
-                Sign In
+                Iniciar sesión
               </Button>
             </nav>
           </div>
@@ -212,9 +213,9 @@ export default function HomePage() {
       {/* Hero Section */}
       <section className="bg-muted py-12">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">Find the Right Therapist for You</h2>
+          <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">Encuentra el psicólogo perfecto para ti</h2>
           <p className="text-lg text-muted-foreground mb-8">
-            Connect with verified mental health professionals in your area. Easy scheduling, secure booking.
+            Conecta con profesionales de salud mental según tu necesidad. Agendá tu sesión de forma rápida y segura.
           </p>
 
           <div className="max-w-2xl mx-auto">
@@ -222,14 +223,14 @@ export default function HomePage() {
               <div className="flex-1 relative">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
                 <Input
-                  placeholder="Search by specialty, name, or condition..."
+                  placeholder="Busca por especialidad, nombre o credenciales..."
                   className="pl-10 h-12"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                 />
               </div>
               <Button size="lg" className="h-12 px-8">
-                Search
+                Buscar
               </Button>
             </div>
           </div>
@@ -248,7 +249,7 @@ export default function HomePage() {
                     className={getActiveFilterCount() > 0 ? "bg-primary/10 border-primary" : ""}
                   >
                     <Filter className="h-4 w-4 mr-2" />
-                    Filters
+                    Filtros
                     {getActiveFilterCount() > 0 && (
                       <Badge variant="secondary" className="ml-2 h-5 w-5 p-0 flex items-center justify-center text-xs">
                         {getActiveFilterCount()}
@@ -280,7 +281,7 @@ export default function HomePage() {
               </div>
             </div>
             <p className="text-sm text-muted-foreground">
-              Showing {filteredTherapists.length} therapist{filteredTherapists.length !== 1 ? "s" : ""} in your area
+              Mostrando {filteredTherapists.length} psicólogo{filteredTherapists.length !== 1 ? "s" : ""}
             </p>
           </div>
 
@@ -292,7 +293,7 @@ export default function HomePage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {filteredTherapists.length === 0 ? (
             <div className="text-center py-12">
-              <p className="text-lg text-muted-foreground mb-4">No therapists found matching your criteria.</p>
+              <p className="text-lg text-muted-foreground mb-4">No se encontraron psicólogos que coincidan con tus criterios.</p>
               <Button
                 variant="outline"
                 onClick={() => {
@@ -307,7 +308,7 @@ export default function HomePage() {
                   })
                 }}
               >
-                Clear all filters
+                Limpiar todos los filtros
               </Button>
             </div>
           ) : (
