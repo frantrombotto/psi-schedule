@@ -1,0 +1,32 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+    url      = env("DATABASE_URL")
+}
+
+
+model Therapist {
+  id               String        @default(cuid()) @id
+  name             String
+  credentials      String
+  specialties      String[]
+  rating           Float
+  reviewCount      Int
+  pricePerSession  Int
+  location         String
+  nextAvailable    String?
+  avatar           String
+  acceptsInsurance Boolean
+  sessionTypes     String[]
+  languages        String[]
+  yearsExperience  Int
+
+  createdAt        DateTime      @default(now()) @map(name: "created_at")
+  updatedAt        DateTime      @updatedAt @map(name: "updated_at")
+
+  @@map(name: "therapists")
+}
