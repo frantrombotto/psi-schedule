@@ -28,7 +28,6 @@ type Therapist = {
   defaultDurationMinutes: number
 }
 
-
 export default function HomePage() {
   const [searchQuery, setSearchQuery] = useState("")
   const [therapists, setTherapists] = useState<Therapist[]>([])
