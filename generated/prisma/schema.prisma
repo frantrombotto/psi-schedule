@@ -1,6 +1,7 @@
 generator client {
-  provider = "prisma-client-js"
-  output   = "../generated/prisma"
+  provider      = "prisma-client-js"
+  output        = "../generated/prisma"
+  binaryTargets = ["native", "darwin-arm64", "rhel-openssl-3.0.x"]
 }
 
 datasource db {
@@ -92,11 +93,14 @@ model Appointment {
   userId String
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  startTs   DateTime          @db.Timestamptz(6)
-  endTs     DateTime          @db.Timestamptz(6)
-  status    AppointmentStatus @default(CONFIRMED)
-  createdAt DateTime          @default(now()) @db.Timestamptz(6)
-  updatedAt DateTime          @updatedAt @db.Timestamptz(6)
+  startTs DateTime          @db.Timestamptz(6)
+  endTs   DateTime          @db.Timestamptz(6)
+  status  AppointmentStatus @default(CONFIRMED)
+
+  price Float
+
+  createdAt DateTime @default(now()) @db.Timestamptz(6)
+  updatedAt DateTime @updatedAt @db.Timestamptz(6)
 
   // prevent exact duplicate same-range bookings (helps but doesn't replace overlap check)
   @@unique([therapistId, startTs, endTs])
