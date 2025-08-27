@@ -1,11 +1,17 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useMemo, useState } from "react"
 import { ChevronLeft, ChevronRight, Clock, CalendarIcon } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { cn } from "@/lib/utils"
 import { SessionType } from "./therapist-card"
+
+type ApiSlot = {
+  start: string
+  available: boolean
+  sessionType?: string
+}
 
 interface TimeSlot {
   time: string
@@ -20,39 +26,7 @@ interface SchedulingCalendarProps {
   onTimeSelect: (date: Date, timeSlot: TimeSlot) => void
   selectedDate?: Date
   selectedTime?: TimeSlot
-}
-
-const generateTimeSlots = (sessionTypes: SessionType[]): TimeSlot[] => {
-  const baseSlots = [
-    "9:00 AM",
-    "9:30 AM",
-    "10:00 AM",
-    "10:30 AM",
-    "11:00 AM",
-    "11:30 AM",
-    "12:00 PM",
-    "12:30 PM",
-    "1:00 PM",
-    "1:30 PM",
-    "2:00 PM",
-    "2:30 PM",
-    "3:00 PM",
-    "3:30 PM",
-    "4:00 PM",
-    "4:30 PM",
-    "5:00 PM",
-    "5:30 PM",
-    "6:00 PM",
-    "6:30 PM",
-    "7:00 PM",
-    "7:30 PM",
-  ]
-
-  return baseSlots.map((time) => ({
-    time,
-    available: Math.random() > 0.3, // Simulate availability
-    sessionType: sessionTypes[Math.floor(Math.random() * sessionTypes.length)],
-  }))
+  therapistId: string
 }
 
 const getDaysInMonth = (date: Date) => {
@@ -78,12 +52,19 @@ const getDaysInMonth = (date: Date) => {
   return days
 }
 
+const formatYMD = (date: Date) => {
+  const y = date.getFullYear()
+  const m = String(date.getMonth() + 1).padStart(2, "0")
+  const d = String(date.getDate()).padStart(2, "0")
+  return `${y}-${m}-${d}`
+}
+
 const isDateAvailable = (date: Date) => {
   const today = new Date()
   today.setHours(0, 0, 0, 0)
 
-  // Only allow booking for future dates and weekdays
-  return date >= today && date.getDay() !== 0 && date.getDay() !== 6
+  // Only allow booking for future dates and not on Sundays
+  return date >= today && date.getDay() !== 0
 }
 
 export function SchedulingCalendar({
@@ -93,19 +74,75 @@ export function SchedulingCalendar({
   onTimeSelect,
   selectedDate,
   selectedTime,
+  therapistId,
 }: SchedulingCalendarProps) {
   const [currentDate, setCurrentDate] = useState(new Date())
   const [viewingDate, setViewingDate] = useState(selectedDate || null)
   const [timeSlots, setTimeSlots] = useState<TimeSlot[]>([])
+  const [availabilityByDate, setAvailabilityByDate] = useState<Record<string, ApiSlot[]>>({})
+  const [isLoadingAvailability, setIsLoadingAvailability] = useState(false)
 
   const days = getDaysInMonth(currentDate)
   const dayNames = ["Dom", "Lun", "Mar", "Mie", "Jue", "Vie", "Sab"]
 
+  const clientTimezone = useMemo(() => {
+    try {
+      return Intl.DateTimeFormat().resolvedOptions().timeZone || "UTC"
+    } catch {
+      return "UTC"
+    }
+  }, [])
+
+  const todayYMD = useMemo(() => formatYMD(new Date()), [])
+  const lastDayOfMonthYMD = useMemo(() => {
+    const y = currentDate.getFullYear()
+    const m = currentDate.getMonth()
+    const last = new Date(y, m + 1, 0)
+    return formatYMD(last)
+  }, [currentDate])
+
+  useEffect(() => {
+    let isCancelled = false
+    const fetchAvailability = async () => {
+      setIsLoadingAvailability(true)
+      try {
+        const params = new URLSearchParams({
+          from_date: todayYMD,
+          to_date: lastDayOfMonthYMD,
+          user_timezone: clientTimezone,
+        })
+        const res = await fetch(`/api/therapists/${therapistId}/availability?${params.toString()}`)
+        if (!res.ok) {
+          setAvailabilityByDate({})
+          return
+        }
+        const json = await res.json()
+        if (!isCancelled) {
+          setAvailabilityByDate(json?.data?.slots ?? {})
+        }
+      } catch {
+        if (!isCancelled) setAvailabilityByDate({})
+      } finally {
+        if (!isCancelled) setIsLoadingAvailability(false)
+      }
+    }
+    fetchAvailability()
+    return () => {
+      isCancelled = true
+    }
+  }, [therapistId, todayYMD, lastDayOfMonthYMD, clientTimezone])
+
   const handleDateClick = (date: Date) => {
     if (!isDateAvailable(date)) return
-
     setViewingDate(date)
-    setTimeSlots(generateTimeSlots(sessionTypes))
+    const key = formatYMD(date)
+    const apiSlots: ApiSlot[] = availabilityByDate[key] || []
+    const mapped: TimeSlot[] = apiSlots.map((s) => ({
+      time: s.start,
+      available: s.available,
+      sessionType: s.sessionType as SessionType,
+    }))
+    setTimeSlots(mapped)
   }
 
   const handleTimeSelect = (timeSlot: TimeSlot) => {
@@ -254,7 +291,9 @@ export function SchedulingCalendar({
                     ))}
                   </div>
                 ) : (
-                  <p className="text-sm text-muted-foreground text-center py-8">No hay horarios disponibles para esta fecha</p>
+                  <p className="text-sm text-muted-foreground text-center py-8">
+                    {isLoadingAvailability ? "Cargando horarios..." : "No hay horarios disponibles para esta fecha"}
+                  </p>
                 )}
 
                 {timeSlots.some((slot) => slot.available) && (
