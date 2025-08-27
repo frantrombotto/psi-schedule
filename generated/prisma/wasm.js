@@ -177,6 +177,18 @@ exports.Prisma.AppointmentScalarFieldEnum = {
   updatedAt: 'updatedAt'
 };
 
+exports.Prisma.UserScalarFieldEnum = {
+  id: 'id',
+  firstName: 'firstName',
+  lastName: 'lastName',
+  email: 'email',
+  phone: 'phone',
+  location: 'location',
+  timezone: 'timezone',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -201,7 +213,8 @@ exports.Prisma.ModelName = {
   Therapist: 'Therapist',
   AvailabilityRule: 'AvailabilityRule',
   AvailabilityException: 'AvailabilityException',
-  Appointment: 'Appointment'
+  Appointment: 'Appointment',
+  User: 'User'
 };
 
 /**

@@ -22,13 +22,12 @@ export async function GET(
   context: { params: { id: string } }
 ): Promise<NextResponse<TherapistAvailability | { error: string }>> {
   const therapistId = context.params?.id;
-  console.log(therapistId, 'therapistId');
 
   const { searchParams } = new URL(req.url);
-  console.log(searchParams, 'searchParams');
   const fromDate = searchParams.get('from_date');
   const toDate = searchParams.get('to_date');
   const userTimezone = searchParams.get('user_timezone');
+
   const [therapist, rules, exceptions, appts] = await Promise.all([
     prisma.therapist.findUnique({
       where: { id: therapistId },
@@ -40,8 +39,8 @@ export async function GET(
       where: {
         therapistId: therapistId,
         date: {
-          gte: new Date(fromDate ?? ''),
-          lte: new Date(toDate ?? ''),
+          gte: new Date(new Date(fromDate ?? '').setHours(0, 0, 0, 0)),
+          lte: new Date(new Date(toDate ?? '').setHours(23, 59, 59, 999)),
         },
       },
     }),
@@ -49,8 +48,8 @@ export async function GET(
       where: {
         therapistId: therapistId,
         status: { in: ['CONFIRMED', 'PENDING'] },
-        startTs: { gte: new Date(fromDate ?? '') },
-        endTs: { lte: new Date(toDate ?? '') },
+        startTs: { gte: new Date(new Date(fromDate ?? '').setHours(0, 0, 0, 0)) },
+        endTs: { lte: new Date(new Date(toDate ?? '').setHours(23, 59, 59, 999)) },
       },
     }),
   ]);
@@ -58,7 +57,6 @@ export async function GET(
     return NextResponse.json({ error: 'Therapist not found' }, { status: 404 });
   }
 
-  //   const slots: Record<string, { start: string; end: string }[]> = {};
   const slots: Record<string, Slot[]> = {};
 
   const datesForAppointments: string[] = getDateRangeArray(
@@ -122,14 +120,19 @@ export async function GET(
       ) {
         const slotStart = start;
         const slotEnd = addMinutes(start, therapist.defaultDurationMinutes);
-        // TODO: Fix comparison of dates
+        // TODO: Fix comparison of appointment dates
         const checkExistingAppointment = appts.some(
-          (a) => !(a.endTs <= slotStart || a.startTs >= slotEnd)
+          (a) => {
+              const timezonedStart = toZonedTime(a.startTs, userTimezone ?? 'America/Argentina/Buenos_Aires')
+              const timezonedEnd = toZonedTime(a.endTs, userTimezone ?? 'America/Argentina/Buenos_Aires')
+
+            return !(timezonedEnd <= slotStart || timezonedStart >= slotEnd)
+          }
         );
 
         slots[date] = slots[date] ?? [];
         slots[date].push({
-          start: formatInTimeZone(slotStart, 'UTC', 'HH:mm a'),
+          start: formatInTimeZone(slotStart, 'UTC', 'hh:mm a'),
           available: !checkExistingAppointment,
           sessionType: window.sessionType,
         });
@@ -168,8 +171,6 @@ const localDateTimeToUtc = (
   timeStr: string,
   tz: string
 ): Date => {
-  console.log('localDateTimeToUtc', { dateStr, timeStr, tz });
   const local = `${dateStr}T${timeStr}`;
-  console.log('local', local);
   return toZonedTime(local, tz);
 };

@@ -25,6 +25,7 @@ type Therapist = {
   sessionTypes: SessionType[]
   languages: string[]
   yearsExperience: number
+  defaultDurationMinutes: number
 }
 
 

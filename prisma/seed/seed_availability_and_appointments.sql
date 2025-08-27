@@ -11,6 +11,13 @@ BEGIN
   END IF;
 END $$;
 
+-- Seed users referenced by appointments
+INSERT INTO users ("id", "firstName", "lastName", "email", "phone", "location", "timezone", "created_at", "updated_at")
+VALUES
+  ('user-a1', 'Ana', 'Gómez', 'ana.gomez@example.com', '+54 9 11 5555-1111', 'CABA, Argentina', 'America/Argentina/Buenos_Aires', now(), now()),
+  ('user-b2', 'Bruno', 'Pérez', 'bruno.perez@example.com', '+54 9 11 5555-2222', 'Córdoba, Argentina', 'America/Argentina/Buenos_Aires', now(), now())
+ON CONFLICT DO NOTHING;
+
 -- Availability Rules
 -- Weekday: 1 = Monday, ... 5 = Friday (Postgres extract(dow) returns 1..7 if set that way; here we rely on app logic consuming weekday as 1-7)
 -- Online (morning slots): Monday to Friday, 09:00-12:00
@@ -18,7 +25,7 @@ INSERT INTO availability_rules ("id", "therapistId", "sessionType", "weekday", "
 VALUES
   (gen_random_uuid(), 'seed-1', 'Online', 1, TIME '09:00', TIME '12:00', now(), now()),
   (gen_random_uuid(), 'seed-1', 'Online', 3, TIME '09:00', TIME '12:00', now(), now()),
-  (gen_random_uuid(), 'seed-1', 'Online', 5, TIME '09:00', TIME '12:00', now(), now()),
+  (gen_random_uuid(), 'seed-1', 'Online', 5, TIME '09:00', TIME '12:00', now(), now())
 ON CONFLICT DO NOTHING;
 
 -- Presencial (afternoon slots): Tuesday and Thursday, 14:00-18:00
@@ -26,7 +33,7 @@ INSERT INTO availability_rules ("id", "therapistId", "sessionType", "weekday", "
 VALUES
   (gen_random_uuid(), 'seed-1', 'Presencial', 2, TIME '14:00', TIME '18:00', now(), now()),
   (gen_random_uuid(), 'seed-1', 'Presencial', 4, TIME '14:00', TIME '18:00', now(), now()),
-  (gen_random_uuid(), 'seed-1', 'Presencial', 6, TIME '09:00', TIME '13:00', now(), now())
+  (gen_random_uuid(), 'seed-1', 'Presencial', 6, TIME '09:00', TIME '13:00', now(), now()),
   (gen_random_uuid(), 'seed-1', 'Presencial', 3, TIME '15:00', TIME '19:00', now(), now())
 ON CONFLICT DO NOTHING;
 

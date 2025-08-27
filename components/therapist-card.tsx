@@ -29,6 +29,7 @@ interface TherapistCardProps {
     sessionTypes: SessionType[]
     languages: string[]
     yearsExperience: number
+    defaultDurationMinutes: number
   }
 }
 
