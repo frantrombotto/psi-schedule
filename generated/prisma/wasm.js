@@ -135,6 +135,44 @@ exports.Prisma.TherapistScalarFieldEnum = {
   sessionTypes: 'sessionTypes',
   languages: 'languages',
   yearsExperience: 'yearsExperience',
+  timezone: 'timezone',
+  defaultDurationMinutes: 'defaultDurationMinutes',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.AvailabilityRuleScalarFieldEnum = {
+  id: 'id',
+  therapistId: 'therapistId',
+  sessionType: 'sessionType',
+  weekday: 'weekday',
+  startTime: 'startTime',
+  endTime: 'endTime',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.AvailabilityExceptionScalarFieldEnum = {
+  id: 'id',
+  therapistId: 'therapistId',
+  sessionType: 'sessionType',
+  date: 'date',
+  startTime: 'startTime',
+  endTime: 'endTime',
+  isBlocked: 'isBlocked',
+  notes: 'notes',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.AppointmentScalarFieldEnum = {
+  id: 'id',
+  therapistId: 'therapistId',
+  sessionType: 'sessionType',
+  userId: 'userId',
+  startTs: 'startTs',
+  endTs: 'endTs',
+  status: 'status',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 };
@@ -153,10 +191,17 @@ exports.Prisma.NullsOrder = {
   first: 'first',
   last: 'last'
 };
-
+exports.AppointmentStatus = exports.$Enums.AppointmentStatus = {
+  PENDING: 'PENDING',
+  CONFIRMED: 'CONFIRMED',
+  CANCELLED: 'CANCELLED'
+};
 
 exports.Prisma.ModelName = {
-  Therapist: 'Therapist'
+  Therapist: 'Therapist',
+  AvailabilityRule: 'AvailabilityRule',
+  AvailabilityException: 'AvailabilityException',
+  Appointment: 'Appointment'
 };
 
 /**

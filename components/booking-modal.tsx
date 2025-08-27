@@ -75,6 +75,7 @@ export function BookingModal({ isOpen, onClose, therapist }: BookingModalProps) 
             onTimeSelect={handleTimeSelect}
             selectedDate={selectedDate || undefined}
             selectedTime={selectedTime || undefined}
+            therapistId={therapist.id}
           />
 
           {selectedDate && selectedTime && (

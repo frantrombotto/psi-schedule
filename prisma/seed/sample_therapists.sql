@@ -16,6 +16,7 @@ INSERT INTO "therapists" (
   "sessionTypes",
   "languages",
   "yearsExperience",
+  "timezone",
   "updated_at"
 ) VALUES
   (
@@ -33,6 +34,7 @@ INSERT INTO "therapists" (
     ARRAY['Online']::text[],
     ARRAY['Español','Inglés']::text[],
     12,
+    'Europe/Madrid',
     now()
   ),
   (
@@ -50,6 +52,7 @@ INSERT INTO "therapists" (
     ARRAY['Presencial']::text[],
     ARRAY['Español','Portugués']::text[],
     8,
+    'America/Argentina/Buenos_Aires',
     now()
   ),
   (
@@ -64,9 +67,10 @@ INSERT INTO "therapists" (
     'Lunes 14:00',
     '/professional-latina-female-therapist.png',
     true,
-    ARRAY['Online','Presencial']::text[],
+    ARRAY['Online']::text[],
     ARRAY['Español','Inglés']::text[],
     15,
+    'America/New_York',
     now()
   ),
   (
@@ -84,6 +88,7 @@ INSERT INTO "therapists" (
     ARRAY['Online','Presencial']::text[],
     ARRAY['Español']::text[],
     10,
+    'America/Argentina/Buenos_Aires',
     now()
   ),
   (
@@ -101,6 +106,7 @@ INSERT INTO "therapists" (
     ARRAY['Online','Presencial']::text[],
     ARRAY['Español']::text[],
     9,
+    'America/Argentina/Buenos_Aires',
     now()
   ),
   (
@@ -118,6 +124,7 @@ INSERT INTO "therapists" (
     ARRAY['Online','Presencial']::text[],
     ARRAY['Español','Inglés']::text[],
     7,
+    'America/Argentina/Buenos_Aires',
     now()
   )
 ON CONFLICT ("id") DO UPDATE SET
