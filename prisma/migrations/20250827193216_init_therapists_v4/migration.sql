@@ -60,7 +60,7 @@ CREATE TABLE "public"."appointments" (
     "id" TEXT NOT NULL,
     "therapistId" TEXT NOT NULL,
     "sessionType" TEXT NOT NULL,
-    "userId" TEXT,
+    "userId" TEXT NOT NULL,
     "startTs" TIMESTAMPTZ(6) NOT NULL,
     "endTs" TIMESTAMPTZ(6) NOT NULL,
     "status" "public"."AppointmentStatus" NOT NULL DEFAULT 'CONFIRMED',
@@ -68,6 +68,21 @@ CREATE TABLE "public"."appointments" (
     "updatedAt" TIMESTAMPTZ(6) NOT NULL,
 
     CONSTRAINT "appointments_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "public"."users" (
+    "id" TEXT NOT NULL,
+    "firstName" TEXT NOT NULL,
+    "lastName" TEXT NOT NULL,
+    "email" TEXT NOT NULL,
+    "phone" TEXT NOT NULL,
+    "location" TEXT NOT NULL,
+    "timezone" TEXT NOT NULL,
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_at" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "users_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateIndex
@@ -93,3 +108,6 @@ ALTER TABLE "public"."availability_exceptions" ADD CONSTRAINT "availability_exce
 
 -- AddForeignKey
 ALTER TABLE "public"."appointments" ADD CONSTRAINT "appointments_therapistId_fkey" FOREIGN KEY ("therapistId") REFERENCES "public"."therapists"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "public"."appointments" ADD CONSTRAINT "appointments_userId_fkey" FOREIGN KEY ("userId") REFERENCES "public"."users"("id") ON DELETE CASCADE ON UPDATE CASCADE;

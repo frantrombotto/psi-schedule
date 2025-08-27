@@ -19,6 +19,7 @@ function therapistToDTO(t: any) {
     sessionTypes: t.sessionTypes,
     languages: t.languages,
     yearsExperience: t.yearsExperience,
+    defaultDurationMinutes: t.defaultDurationMinutes,
   }
 }
 

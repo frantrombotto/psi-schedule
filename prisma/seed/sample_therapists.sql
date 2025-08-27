@@ -34,7 +34,7 @@ INSERT INTO "therapists" (
     ARRAY['Online']::text[],
     ARRAY['Español','Inglés']::text[],
     12,
-    'Europe/Madrid',
+    'America/Argentina/Buenos_Aires',
     now()
   ),
   (
@@ -52,7 +52,7 @@ INSERT INTO "therapists" (
     ARRAY['Presencial']::text[],
     ARRAY['Español','Portugués']::text[],
     8,
-    'America/Argentina/Buenos_Aires',
+    'Europe/Madrid',
     now()
   ),
   (
