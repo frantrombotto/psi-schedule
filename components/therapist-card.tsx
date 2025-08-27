@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { Star, Clock, MapPin, Phone, Video, MessageCircle } from "lucide-react"
+import { Star, Clock, MapPin, Laptop, Home } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
@@ -9,9 +9,8 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { BookingModal } from "./booking-modal"
 
 export enum SessionType {
-  VIDEO = "video",
-  PHONE = "phone",
-  IN_PERSON = "in-person",
+  VIDEO = "Online",
+  IN_PERSON = "Presencial",
 }
 
 interface TherapistCardProps {
@@ -30,6 +29,7 @@ interface TherapistCardProps {
     sessionTypes: SessionType[]
     languages: string[]
     yearsExperience: number
+    defaultDurationMinutes: number
   }
 }
 
@@ -56,7 +56,7 @@ export function TherapistCard({ therapist }: TherapistCardProps) {
                 <div>
                   <h3 className="font-semibold text-foreground text-lg leading-tight">{therapist.name}</h3>
                   <p className="text-sm text-muted-foreground mb-1">{therapist.credentials}</p>
-                  <p className="text-xs text-muted-foreground">{therapist.yearsExperience} years experience</p>
+                  <p className="text-xs text-muted-foreground">{therapist.yearsExperience} años de experiencia</p>
                 </div>
               </div>
 
@@ -72,7 +72,7 @@ export function TherapistCard({ therapist }: TherapistCardProps) {
                   ))}
                 </div>
                 <span className="text-sm font-medium">{therapist.rating}</span>
-                <span className="text-sm text-muted-foreground">({therapist.reviewCount} reviews)</span>
+                <span className="text-sm text-muted-foreground">({therapist.reviewCount} opiniones)</span>
               </div>
 
               <div className="flex items-center space-x-4 mb-3 text-sm text-muted-foreground">
@@ -82,27 +82,21 @@ export function TherapistCard({ therapist }: TherapistCardProps) {
                 </div>
                 <div className="flex items-center space-x-1">
                   <Clock className="h-4 w-4" />
-                  <span>Next: {therapist.nextAvailable}</span>
+                  <span>Próximo disponible: {therapist.nextAvailable}</span>
                 </div>
               </div>
 
               <div className="flex items-center space-x-2 mb-3">
                 {therapist.sessionTypes.includes(SessionType.VIDEO) && (
                   <div className="flex items-center space-x-1 text-xs text-muted-foreground">
-                    <Video className="h-3 w-3" />
-                    <span>Video</span>
-                  </div>
-                )}
-                {therapist.sessionTypes.includes(SessionType.PHONE) && (
-                  <div className="flex items-center space-x-1 text-xs text-muted-foreground">
-                    <Phone className="h-3 w-3" />
-                    <span>Phone</span>
+                    <Laptop className="h-3 w-3" />
+                    <span>Online</span>
                   </div>
                 )}
                 {therapist.sessionTypes.includes(SessionType.IN_PERSON) && (
                   <div className="flex items-center space-x-1 text-xs text-muted-foreground">
-                    <MessageCircle className="h-3 w-3" />
-                    <span>In-person</span>
+                    <Home className="h-3 w-3" />
+                    <span>Presencial</span>
                   </div>
                 )}
               </div>
@@ -121,7 +115,7 @@ export function TherapistCard({ therapist }: TherapistCardProps) {
               </div>
 
               <div className="flex items-center space-x-4 mb-4 text-xs text-muted-foreground">
-                {therapist.acceptsInsurance && <span className="text-green-600 font-medium">Accepts Insurance</span>}
+                {therapist.acceptsInsurance && <span className="text-green-600 font-medium">Trabaja con obra social</span>}
                 <span>Languages: {therapist.languages.join(", ")}</span>
               </div>
 
@@ -132,7 +126,7 @@ export function TherapistCard({ therapist }: TherapistCardProps) {
                 </div>
                 <div className="flex space-x-2">
                   <Button size="sm" onClick={() => setShowBookingModal(true)}>
-                    Book Now
+                    Agendar
                   </Button>
                 </div>
               </div>

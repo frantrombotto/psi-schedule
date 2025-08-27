@@ -8,6 +8,7 @@ import { Checkbox } from "@/components/ui/checkbox"
 import { Slider } from "@/components/ui/slider"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible"
+import { SessionType } from "./therapist-card"
 
 interface FilterPanelProps {
   filters: {
@@ -23,28 +24,30 @@ interface FilterPanelProps {
 }
 
 const availableSpecialties = [
-  "Anxiety",
-  "Depression",
+  "Ansiedad",
+  "Depresión",
   "Trauma",
-  "PTSD",
-  "Couples Therapy",
-  "Family Therapy",
-  "ADHD",
-  "Autism",
-  "Child Therapy",
-  "Addiction",
-  "Substance Abuse",
-  "Eating Disorders",
-  "OCD",
-  "Panic Disorders",
-  "Bipolar",
-  "Grief",
-  "Anger Management",
-  "Self-Esteem",
-]
+  "Trastorno por Estrés Postraumático (TEPT)",
+  "Terapia de pareja",
+  "Terapia familiar",
+  "Comunicación",
+  "TDAH",
+  "Autismo",
+  "Terapia infantil",
+  "Problemas conductuales",
+  "Adicciones",
+  "Abuso de sustancias",
+  "Manejo de la ira",
+  "Trastornos alimentarios",
+  "Imagen corporal",
+  "Autoestima",
+  "TOC",
+  "Trastornos de pánico",
+  "Mindfulness",
+];
 
-const availableSessionTypes = ["video", "in-person", "phone"]
-const availableLanguages = ["English", "Spanish", "Mandarin", "Korean", "French", "German"]
+const availableSessionTypes = [SessionType.VIDEO, SessionType.IN_PERSON]
+const availableLanguages = ["Español", "Inglés", "Portugués"]
 
 export function FilterPanel({ filters, onFiltersChange, onClose }: FilterPanelProps) {
   const [openSections, setOpenSections] = useState({
@@ -99,10 +102,10 @@ export function FilterPanel({ filters, onFiltersChange, onClose }: FilterPanelPr
   return (
     <Card className="w-80 h-fit">
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
-        <CardTitle className="text-lg">Filters</CardTitle>
+        <CardTitle className="text-lg">Filtros</CardTitle>
         <div className="flex items-center space-x-2">
           <Button variant="ghost" size="sm" onClick={clearAllFilters}>
-            Clear All
+            Limpiar todos
           </Button>
           <Button variant="ghost" size="sm" onClick={onClose}>
             <X className="h-4 w-4" />
@@ -110,10 +113,32 @@ export function FilterPanel({ filters, onFiltersChange, onClose }: FilterPanelPr
         </div>
       </CardHeader>
       <CardContent className="space-y-4 max-h-96 overflow-y-auto">
+        {/* Session Types */}
+        <Collapsible open={openSections.sessionTypes} onOpenChange={() => toggleSection("sessionTypes")}>
+          <CollapsibleTrigger className="flex items-center justify-between w-full">
+            <Label className="text-sm font-medium">Tipo de sesión</Label>
+            {openSections.sessionTypes ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+          </CollapsibleTrigger>
+          <CollapsibleContent className="space-y-2 mt-2">
+            {availableSessionTypes.map((type) => (
+              <div key={type} className="flex items-center space-x-2">
+                <Checkbox
+                  id={type}
+                  checked={filters.sessionTypes.includes(type)}
+                  onCheckedChange={() => toggleSessionType(type)}
+                />
+                <Label htmlFor={type} className="text-sm capitalize">
+                  {type.replace("-", " ")}
+                </Label>
+              </div>
+            ))}
+          </CollapsibleContent>
+        </Collapsible>
+
         {/* Specialties */}
         <Collapsible open={openSections.specialties} onOpenChange={() => toggleSection("specialties")}>
           <CollapsibleTrigger className="flex items-center justify-between w-full">
-            <Label className="text-sm font-medium">Specialties</Label>
+            <Label className="text-sm font-medium">Especialidades</Label>
             {openSections.specialties ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
           </CollapsibleTrigger>
           <CollapsibleContent className="space-y-2 mt-2">
@@ -135,7 +160,7 @@ export function FilterPanel({ filters, onFiltersChange, onClose }: FilterPanelPr
         {/* Price Range */}
         <Collapsible open={openSections.price} onOpenChange={() => toggleSection("price")}>
           <CollapsibleTrigger className="flex items-center justify-between w-full">
-            <Label className="text-sm font-medium">Price Range</Label>
+            <Label className="text-sm font-medium">Rango de precios</Label>
             {openSections.price ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
           </CollapsibleTrigger>
           <CollapsibleContent className="space-y-3 mt-2">
@@ -159,7 +184,7 @@ export function FilterPanel({ filters, onFiltersChange, onClose }: FilterPanelPr
         {/* Insurance */}
         <Collapsible open={openSections.insurance} onOpenChange={() => toggleSection("insurance")}>
           <CollapsibleTrigger className="flex items-center justify-between w-full">
-            <Label className="text-sm font-medium">Insurance</Label>
+            <Label className="text-sm font-medium">Obra social</Label>
             {openSections.insurance ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
           </CollapsibleTrigger>
           <CollapsibleContent className="space-y-2 mt-2">
@@ -170,7 +195,7 @@ export function FilterPanel({ filters, onFiltersChange, onClose }: FilterPanelPr
                 onCheckedChange={(checked) => updateFilter("acceptsInsurance", checked ? true : null)}
               />
               <Label htmlFor="accepts-insurance" className="text-sm">
-                Accepts Insurance
+                Trabaja con obra social
               </Label>
             </div>
             <div className="flex items-center space-x-2">
@@ -180,38 +205,16 @@ export function FilterPanel({ filters, onFiltersChange, onClose }: FilterPanelPr
                 onCheckedChange={(checked) => updateFilter("acceptsInsurance", checked ? false : null)}
               />
               <Label htmlFor="no-insurance" className="text-sm">
-                Self-Pay Only
+                Atención particular
               </Label>
             </div>
-          </CollapsibleContent>
-        </Collapsible>
-
-        {/* Session Types */}
-        <Collapsible open={openSections.sessionTypes} onOpenChange={() => toggleSection("sessionTypes")}>
-          <CollapsibleTrigger className="flex items-center justify-between w-full">
-            <Label className="text-sm font-medium">Session Types</Label>
-            {openSections.sessionTypes ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
-          </CollapsibleTrigger>
-          <CollapsibleContent className="space-y-2 mt-2">
-            {availableSessionTypes.map((type) => (
-              <div key={type} className="flex items-center space-x-2">
-                <Checkbox
-                  id={type}
-                  checked={filters.sessionTypes.includes(type)}
-                  onCheckedChange={() => toggleSessionType(type)}
-                />
-                <Label htmlFor={type} className="text-sm capitalize">
-                  {type.replace("-", " ")}
-                </Label>
-              </div>
-            ))}
           </CollapsibleContent>
         </Collapsible>
 
         {/* Languages */}
         <Collapsible open={openSections.languages} onOpenChange={() => toggleSection("languages")}>
           <CollapsibleTrigger className="flex items-center justify-between w-full">
-            <Label className="text-sm font-medium">Languages</Label>
+            <Label className="text-sm font-medium">Idiomas</Label>
             {openSections.languages ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
           </CollapsibleTrigger>
           <CollapsibleContent className="space-y-2 mt-2">
@@ -233,7 +236,7 @@ export function FilterPanel({ filters, onFiltersChange, onClose }: FilterPanelPr
         {/* Rating */}
         <Collapsible open={openSections.rating} onOpenChange={() => toggleSection("rating")}>
           <CollapsibleTrigger className="flex items-center justify-between w-full">
-            <Label className="text-sm font-medium">Minimum Rating</Label>
+            <Label className="text-sm font-medium">Mínima calificación</Label>
             {openSections.rating ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
           </CollapsibleTrigger>
           <CollapsibleContent className="space-y-3 mt-2">
@@ -248,7 +251,7 @@ export function FilterPanel({ filters, onFiltersChange, onClose }: FilterPanelPr
               />
             </div>
             <div className="text-center text-sm text-muted-foreground">
-              {filters.minRating.toFixed(1)} stars and above
+              {filters.minRating.toFixed(1)} estrellas y más
             </div>
           </CollapsibleContent>
         </Collapsible>

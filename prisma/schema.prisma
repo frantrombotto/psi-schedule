@@ -1,0 +1,126 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+    url      = env("DATABASE_URL")
+}
+
+enum AppointmentStatus {
+  PENDING
+  CONFIRMED
+  CANCELLED
+}
+
+model Therapist {
+  id               String        @default(cuid()) @id
+  name             String
+  credentials      String
+  specialties      String[]
+  rating           Float
+  reviewCount      Int
+  pricePerSession  Int
+  location         String
+  nextAvailable    String?
+  avatar           String
+  acceptsInsurance Boolean
+  sessionTypes     String[]
+  languages        String[]
+  yearsExperience  Int
+  timezone                 String    
+  defaultDurationMinutes   Int       @default(50)
+  
+  availabilityRules        AvailabilityRule[]
+  availabilityExceptions   AvailabilityException[]
+  appointments             Appointment[]
+
+  createdAt        DateTime      @default(now()) @map(name: "created_at")
+  updatedAt        DateTime      @updatedAt @map(name: "updated_at")
+
+  @@map(name: "therapists")
+  @@index([timezone])
+}
+
+model AvailabilityRule {
+  id           String   @id @default(uuid())
+  therapistId  String
+  therapist    Therapist @relation(fields: [therapistId], references: [id], onDelete: Cascade)
+   
+  sessionType String
+
+  weekday      Int      
+  startTime    DateTime   @db.Time
+  endTime      DateTime   @db.Time
+  
+  createdAt    DateTime @default(now()) @db.Timestamptz(6)
+  updatedAt    DateTime @updatedAt @db.Timestamptz(6)
+
+  @@map("availability_rules")
+  @@index([therapistId, weekday])
+}
+
+model AvailabilityException {
+  id           String   @id @default(uuid())
+  therapistId  String
+  therapist    Therapist @relation(fields: [therapistId], references: [id], onDelete: Cascade)
+
+  sessionType String
+
+  date         DateTime @db.Date     // day this exception applies to (date-only)
+  // If both startTime & endTime are null and isBlocked = true => whole day blocked.
+  startTime    DateTime?  @db.Time     // optional partial-day exception (add/override)
+  endTime      DateTime?  @db.Time
+  isBlocked    Boolean  @default(true) // true = block availability for the whole day
+
+  notes        String?
+  createdAt    DateTime @default(now()) @db.Timestamptz(6)
+  updatedAt    DateTime @updatedAt @db.Timestamptz(6)
+
+  @@map("availability_exceptions")
+  @@index([therapistId, date])
+}
+
+model Appointment {
+  id           String    @id @default(uuid())
+  therapistId  String
+  therapist    Therapist @relation(fields: [therapistId], references: [id], onDelete: Cascade)
+
+  sessionType String
+
+  userId       String
+  user         User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  startTs      DateTime  @db.Timestamptz(6) 
+  endTs        DateTime  @db.Timestamptz(6) 
+  status       AppointmentStatus @default(CONFIRMED)
+
+  price         Float
+
+  createdAt    DateTime  @default(now()) @db.Timestamptz(6)
+  updatedAt    DateTime  @updatedAt @db.Timestamptz(6)
+
+  @@map("appointments")
+  // prevent exact duplicate same-range bookings (helps but doesn't replace overlap check)
+  @@unique([therapistId, startTs, endTs])
+  // index used to quickly find overlapping appointments for a date range
+  @@index([therapistId, startTs, endTs])
+}
+
+model User {
+  id           String    @id @default(uuid())
+  firstName    String
+  lastName     String
+  email        String
+  phone        String
+  location     String
+  timezone     String
+  
+  appointments             Appointment[]
+
+  createdAt        DateTime      @default(now()) @map(name: "created_at")
+  updatedAt        DateTime      @updatedAt @map(name: "updated_at")
+
+  @@map(name: "users")
+}

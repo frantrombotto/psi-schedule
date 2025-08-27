@@ -1,7 +1,7 @@
 "use client"
 
-import { useState, useMemo } from "react"
-import { Search, Filter, X } from "lucide-react"
+import { useState, useMemo, useEffect } from "react"
+import { Search, Filter, X, Loader2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
@@ -10,107 +10,29 @@ import { FilterPanel } from "@/components/filter-panel"
 import { SessionType } from "@/components/therapist-card"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 
-const sampleTherapists = [
-  {
-    id: "1",
-    name: "Dr. Sarah Martinez",
-    credentials: "Licensed Clinical Psychologist, PhD",
-    specialties: ["Anxiety", "Depression", "Trauma", "PTSD"],
-    rating: 4.9,
-    reviewCount: 127,
-    pricePerSession: 150,
-    location: "Manhattan, NY",
-    nextAvailable: "Today 3:00 PM",
-    avatar: "/professional-woman-therapist.png",
-    acceptsInsurance: true,
-    sessionTypes: [SessionType.VIDEO, SessionType.IN_PERSON],
-    languages: ["English", "Spanish"],
-    yearsExperience: 12,
-  },
-  {
-    id: "2",
-    name: "Dr. Michael Chen",
-    credentials: "Licensed Marriage & Family Therapist, LMFT",
-    specialties: ["Couples Therapy", "Family Therapy", "Communication"],
-    rating: 4.8,
-    reviewCount: 89,
-    pricePerSession: 180,
-    location: "Brooklyn, NY",
-    nextAvailable: "Tomorrow 10:00 AM",
-    avatar: "/professional-asian-male-therapist.png",
-    acceptsInsurance: false,
-    sessionTypes: [SessionType.VIDEO, SessionType.IN_PERSON, SessionType.PHONE],
-    languages: ["English", "Mandarin"],
-    yearsExperience: 8,
-  },
-  {
-    id: "3",
-    name: "Dr. Emily Rodriguez",
-    credentials: "Licensed Clinical Social Worker, LCSW",
-    specialties: ["ADHD", "Autism", "Child Therapy", "Behavioral Issues"],
-    rating: 4.9,
-    reviewCount: 156,
-    pricePerSession: 120,
-    location: "Queens, NY",
-    nextAvailable: "Monday 2:00 PM",
-    avatar: "/professional-latina-female-therapist.png",
-    acceptsInsurance: true,
-    sessionTypes: [SessionType.VIDEO, SessionType.IN_PERSON],
-    languages: ["English", "Spanish"],
-    yearsExperience: 15,
-  },
-  {
-    id: "4",
-    name: "Dr. James Wilson",
-    credentials: "Licensed Professional Counselor, LPC",
-    specialties: ["Addiction", "Substance Abuse", "Men's Issues", "Anger Management"],
-    rating: 4.7,
-    reviewCount: 73,
-    pricePerSession: 140,
-    location: "Bronx, NY",
-    nextAvailable: "Wednesday 4:00 PM",
-    avatar: "/professional-black-male-therapist.png",
-    acceptsInsurance: true,
-    sessionTypes: [SessionType.VIDEO, SessionType.PHONE],
-    languages: ["English"],
-    yearsExperience: 10,
-  },
-  {
-    id: "5",
-    name: "Dr. Lisa Thompson",
-    credentials: "Licensed Clinical Psychologist, PsyD",
-    specialties: ["Eating Disorders", "Body Image", "Women's Issues", "Self-Esteem"],
-    rating: 4.8,
-    reviewCount: 94,
-    pricePerSession: 160,
-    location: "Staten Island, NY",
-    nextAvailable: "Friday 11:00 AM",
-    avatar: "/professional-blonde-female-therapist.png",
-    acceptsInsurance: false,
-    sessionTypes: [SessionType.VIDEO, SessionType.IN_PERSON],
-    languages: ["English"],
-    yearsExperience: 9,
-  },
-  {
-    id: "6",
-    name: "Dr. David Kim",
-    credentials: "Licensed Mental Health Counselor, LMHC",
-    specialties: ["Anxiety", "OCD", "Panic Disorders", "Mindfulness"],
-    rating: 4.9,
-    reviewCount: 112,
-    pricePerSession: 135,
-    location: "Manhattan, NY",
-    nextAvailable: "Today 6:00 PM",
-    avatar: "/professional-korean-male-therapist.png",
-    acceptsInsurance: true,
-    sessionTypes: [SessionType.VIDEO, SessionType.IN_PERSON, SessionType.PHONE],
-    languages: ["English", "Korean"],
-    yearsExperience: 7,
-  },
-]
+type Therapist = {
+  id: string
+  name: string
+  credentials: string
+  specialties: string[]
+  rating: number
+  reviewCount: number
+  pricePerSession: number
+  location: string
+  nextAvailable: string
+  avatar: string
+  acceptsInsurance: boolean
+  sessionTypes: SessionType[]
+  languages: string[]
+  yearsExperience: number
+  defaultDurationMinutes: number
+}
 
 export default function HomePage() {
   const [searchQuery, setSearchQuery] = useState("")
+  const [therapists, setTherapists] = useState<Therapist[]>([])
+  const [isLoading, setIsLoading] = useState(false)
+  const [apiError, setApiError] = useState<string | null>(null)
   const [filtersOpen, setFiltersOpen] = useState(false)
   const [filters, setFilters] = useState({
     specialties: [],
@@ -122,7 +44,7 @@ export default function HomePage() {
   })
 
   const filteredTherapists = useMemo(() => {
-    return sampleTherapists.filter((therapist) => {
+    return therapists.filter((therapist) => {
       // Text search
       if (searchQuery) {
         const query = searchQuery.toLowerCase()
@@ -165,7 +87,34 @@ export default function HomePage() {
 
       return true
     })
-  }, [searchQuery, filters])
+  }, [searchQuery, filters, therapists])
+
+  const fetchTherapists = async (query: string) => {
+    setIsLoading(true)
+    setApiError(null)
+    try {
+      const url = new URL("/api/therapists", window.location.origin)
+      if (query.trim()) url.searchParams.set("search", query.trim())
+      const res = await fetch(url.toString(), { cache: "no-store" })
+      if (!res.ok) throw new Error(`HTTP ${res.status}`)
+      const json = await res.json()
+      const data = (json?.data || []).map((t: any) => ({
+        ...t,
+        sessionTypes: t.sessionTypes || [],
+        nextAvailable: t.nextAvailable ?? "",
+      })) as Therapist[]
+      setTherapists(data)
+    } catch (err: any) {
+      setApiError(err?.message || "Error fetching therapists")
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  useEffect(() => {
+    fetchTherapists("")
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   const getActiveFilterCount = () => {
     let count = 0
@@ -196,13 +145,13 @@ export default function HomePage() {
             </div>
             <nav className="hidden md:flex items-center space-x-6">
               <a href="#" className="hover:text-primary-foreground/80 transition-colors">
-                Find Therapists
+                Encuentra tu psicólogo
               </a>
               <a href="#" className="hover:text-primary-foreground/80 transition-colors">
-                About
+                Acerca de nosotros
               </a>
               <Button variant="secondary" size="sm">
-                Sign In
+                Iniciar sesión
               </Button>
             </nav>
           </div>
@@ -212,9 +161,9 @@ export default function HomePage() {
       {/* Hero Section */}
       <section className="bg-muted py-12">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">Find the Right Therapist for You</h2>
+          <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">Encuentra el psicólogo perfecto para ti</h2>
           <p className="text-lg text-muted-foreground mb-8">
-            Connect with verified mental health professionals in your area. Easy scheduling, secure booking.
+            Conecta con profesionales de salud mental según tu necesidad. Agendá tu sesión de forma rápida y segura.
           </p>
 
           <div className="max-w-2xl mx-auto">
@@ -222,14 +171,21 @@ export default function HomePage() {
               <div className="flex-1 relative">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
                 <Input
-                  placeholder="Search by specialty, name, or condition..."
+                  placeholder="Busca por especialidad, nombre o credenciales..."
                   className="pl-10 h-12"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                 />
               </div>
-              <Button size="lg" className="h-12 px-8">
-                Search
+              <Button size="lg" className="h-12 px-8" onClick={() => fetchTherapists(searchQuery)} disabled={isLoading}>
+                {isLoading ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Buscando...
+                  </>
+                ) : (
+                  "Buscar"
+                )}
               </Button>
             </div>
           </div>
@@ -248,7 +204,7 @@ export default function HomePage() {
                     className={getActiveFilterCount() > 0 ? "bg-primary/10 border-primary" : ""}
                   >
                     <Filter className="h-4 w-4 mr-2" />
-                    Filters
+                    Filtros
                     {getActiveFilterCount() > 0 && (
                       <Badge variant="secondary" className="ml-2 h-5 w-5 p-0 flex items-center justify-center text-xs">
                         {getActiveFilterCount()}
@@ -280,7 +236,11 @@ export default function HomePage() {
               </div>
             </div>
             <p className="text-sm text-muted-foreground">
-              Showing {filteredTherapists.length} therapist{filteredTherapists.length !== 1 ? "s" : ""} in your area
+              {isLoading
+                ? "Cargando..."
+                : apiError
+                ? "Ocurrió un error al cargar los psicólogos"
+                : `Mostrando ${filteredTherapists.length} psicólogo${filteredTherapists.length !== 1 ? "s" : ""}`}
             </p>
           </div>
 
@@ -290,9 +250,32 @@ export default function HomePage() {
 
       <section className="py-8">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          {filteredTherapists.length === 0 ? (
+          {isLoading ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {Array.from({ length: 6 }).map((_, i) => (
+                <div key={i} className="bg-card rounded-xl border p-6 animate-pulse">
+                  <div className="flex items-start space-x-4">
+                    <div className="h-16 w-16 rounded-full bg-muted" />
+                    <div className="flex-1 space-y-3">
+                      <div className="h-4 w-1/3 bg-muted rounded" />
+                      <div className="h-3 w-2/3 bg-muted rounded" />
+                      <div className="h-3 w-1/2 bg-muted rounded" />
+                      <div className="h-8 w-full bg-muted rounded" />
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : apiError ? (
             <div className="text-center py-12">
-              <p className="text-lg text-muted-foreground mb-4">No therapists found matching your criteria.</p>
+              <p className="text-lg text-destructive mb-4">{apiError}</p>
+              <Button variant="outline" onClick={() => fetchTherapists(searchQuery)}>
+                Reintentar
+              </Button>
+            </div>
+          ) : filteredTherapists.length === 0 ? (
+            <div className="text-center py-12">
+              <p className="text-lg text-muted-foreground mb-4">No se encontraron psicólogos que coincidan con tus criterios.</p>
               <Button
                 variant="outline"
                 onClick={() => {
@@ -307,7 +290,7 @@ export default function HomePage() {
                   })
                 }}
               >
-                Clear all filters
+                Limpiar todos los filtros
               </Button>
             </div>
           ) : (
