@@ -14,6 +14,7 @@ export async function POST(req: NextRequest) {
       startTs,
       endTs,
       status, // optional; defaults to CONFIRMED by schema
+      price,
     } = body || {}
 
     if (!therapistId || !userId || !sessionType || !startTs || !endTs) {
@@ -23,8 +24,6 @@ export async function POST(req: NextRequest) {
       )
     }
 
-    console.log('appointment data', { therapistId, userId, sessionType, startTs, endTs })
-
     const created = await prisma.appointment.create({
       data: {
         therapistId,
@@ -33,6 +32,7 @@ export async function POST(req: NextRequest) {
         startTs,
         endTs,
         status,
+        price,
       },
     })
 

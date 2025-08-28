@@ -18,6 +18,65 @@ VALUES
   ('user-b2', 'Bruno', 'Pérez', 'bruno.perez@example.com', '+54 9 11 5555-2222', 'Córdoba, Argentina', 'America/Argentina/Buenos_Aires', now(), now())
 ON CONFLICT DO NOTHING;
 
+ 
+
+-- Additional Availability Rules for other therapists (seed-2..seed-6)
+-- Online (Mon/Wed/Fri 09:00-12:00) where applicable
+INSERT INTO availability_rules ("id", "therapistId", "sessionType", "weekday", "startTime", "endTime", "createdAt", "updatedAt")
+VALUES
+  (gen_random_uuid(), 'seed-3', 'Online', 1, TIME '09:00', TIME '12:00', now(), now()),
+  (gen_random_uuid(), 'seed-3', 'Online', 3, TIME '09:00', TIME '12:00', now(), now()),
+  (gen_random_uuid(), 'seed-3', 'Online', 5, TIME '09:00', TIME '12:00', now(), now()),
+  (gen_random_uuid(), 'seed-4', 'Online', 1, TIME '09:00', TIME '12:00', now(), now()),
+  (gen_random_uuid(), 'seed-4', 'Online', 3, TIME '09:00', TIME '12:00', now(), now()),
+  (gen_random_uuid(), 'seed-4', 'Online', 5, TIME '09:00', TIME '12:00', now(), now()),
+  (gen_random_uuid(), 'seed-5', 'Online', 1, TIME '09:00', TIME '12:00', now(), now()),
+  (gen_random_uuid(), 'seed-5', 'Online', 3, TIME '09:00', TIME '12:00', now(), now()),
+  (gen_random_uuid(), 'seed-5', 'Online', 5, TIME '09:00', TIME '12:00', now(), now()),
+  (gen_random_uuid(), 'seed-6', 'Online', 1, TIME '09:00', TIME '12:00', now(), now()),
+  (gen_random_uuid(), 'seed-6', 'Online', 3, TIME '09:00', TIME '12:00', now(), now()),
+  (gen_random_uuid(), 'seed-6', 'Online', 5, TIME '09:00', TIME '12:00', now(), now())
+ON CONFLICT DO NOTHING;
+
+-- Presencial (Tue/Thu 14:00-18:00, plus Sat 09:00-13:00 and Wed 15:00-19:00) where applicable
+INSERT INTO availability_rules ("id", "therapistId", "sessionType", "weekday", "startTime", "endTime", "createdAt", "updatedAt")
+VALUES
+  (gen_random_uuid(), 'seed-2', 'Presencial', 2, TIME '14:00', TIME '18:00', now(), now()),
+  (gen_random_uuid(), 'seed-2', 'Presencial', 4, TIME '14:00', TIME '18:00', now(), now()),
+  (gen_random_uuid(), 'seed-2', 'Presencial', 6, TIME '09:00', TIME '13:00', now(), now()),
+  (gen_random_uuid(), 'seed-2', 'Presencial', 3, TIME '15:00', TIME '19:00', now(), now()),
+  (gen_random_uuid(), 'seed-4', 'Presencial', 2, TIME '14:00', TIME '18:00', now(), now()),
+  (gen_random_uuid(), 'seed-4', 'Presencial', 4, TIME '14:00', TIME '18:00', now(), now()),
+  (gen_random_uuid(), 'seed-4', 'Presencial', 6, TIME '09:00', TIME '13:00', now(), now()),
+  (gen_random_uuid(), 'seed-4', 'Presencial', 3, TIME '15:00', TIME '19:00', now(), now()),
+  (gen_random_uuid(), 'seed-5', 'Presencial', 2, TIME '14:00', TIME '18:00', now(), now()),
+  (gen_random_uuid(), 'seed-5', 'Presencial', 4, TIME '14:00', TIME '18:00', now(), now()),
+  (gen_random_uuid(), 'seed-5', 'Presencial', 6, TIME '09:00', TIME '13:00', now(), now()),
+  (gen_random_uuid(), 'seed-5', 'Presencial', 3, TIME '15:00', TIME '19:00', now(), now()),
+  (gen_random_uuid(), 'seed-6', 'Presencial', 2, TIME '14:00', TIME '18:00', now(), now()),
+  (gen_random_uuid(), 'seed-6', 'Presencial', 4, TIME '14:00', TIME '18:00', now(), now()),
+  (gen_random_uuid(), 'seed-6', 'Presencial', 6, TIME '09:00', TIME '13:00', now(), now()),
+  (gen_random_uuid(), 'seed-6', 'Presencial', 3, TIME '15:00', TIME '19:00', now(), now())
+ON CONFLICT DO NOTHING;
+
+-- Availability Exceptions: next Wednesday fully blocked for all therapists by their session types
+WITH today AS (
+  SELECT (current_date) AS d
+), next_wed AS (
+  SELECT (d + ((10 - EXTRACT(DOW FROM d)::int) % 7))::date AS w FROM today
+)
+INSERT INTO availability_exceptions ("id", "therapistId", "sessionType", "date", "startTime", "endTime", "isBlocked", "notes", "createdAt", "updatedAt")
+SELECT gen_random_uuid(), v.therapistId, v.sessionType, w, NULL, NULL, true, 'Capacitación - día bloqueado', now(), now()
+FROM next_wed,
+  (VALUES
+    ('seed-2','Presencial'),
+    ('seed-3','Online'),
+    ('seed-4','Online'), ('seed-4','Presencial'),
+    ('seed-5','Online'), ('seed-5','Presencial'),
+    ('seed-6','Online'), ('seed-6','Presencial')
+  ) AS v(therapistId, sessionType)
+ON CONFLICT DO NOTHING;
+
 -- Availability Rules
 -- Weekday: 1 = Monday, ... 5 = Friday (Postgres extract(dow) returns 1..7 if set that way; here we rely on app logic consuming weekday as 1-7)
 -- Online (morning slots): Monday to Friday, 09:00-12:00
@@ -55,8 +114,8 @@ WITH base AS (
 ), next_mon AS (
   SELECT (d + ((8 - EXTRACT(DOW FROM d)::int) % 7))::date AS m FROM base
 )
-INSERT INTO appointments ("id", "therapistId", "sessionType", "userId", "startTs", "endTs", "status", "createdAt", "updatedAt")
-SELECT gen_random_uuid(), 'seed-1', 'Online', 'user-a1', (m + TIME '09:30') AT TIME ZONE 'America/Argentina/Buenos_Aires', (m + TIME '10:20') AT TIME ZONE 'America/Argentina/Buenos_Aires', 'CONFIRMED'::"AppointmentStatus", now(), now() FROM next_mon
+INSERT INTO appointments ("id", "therapistId", "sessionType", "userId", "startTs", "endTs", "status", "price", "createdAt", "updatedAt")
+SELECT gen_random_uuid(), 'seed-1', 'Online', 'user-a1', (m + TIME '09:30') AT TIME ZONE 'America/Argentina/Buenos_Aires', (m + TIME '10:20') AT TIME ZONE 'America/Argentina/Buenos_Aires', 'CONFIRMED'::"AppointmentStatus", (SELECT t."pricePerSession" FROM therapists t WHERE t.id = 'seed-1')::float, now(), now() FROM next_mon
 ON CONFLICT DO NOTHING;
 
 -- Appointment 2: Presencial, next Thursday 15:00-15:50
@@ -65,7 +124,7 @@ WITH base AS (
 ), next_thu AS (
   SELECT (d + ((11 - EXTRACT(DOW FROM d)::int) % 7))::date AS t FROM base
 )
-INSERT INTO appointments ("id", "therapistId", "sessionType", "userId", "startTs", "endTs", "status", "createdAt", "updatedAt")
-SELECT gen_random_uuid(), 'seed-1', 'Presencial', 'user-b2', (t + TIME '15:00') AT TIME ZONE 'America/Argentina/Buenos_Aires', (t + TIME '15:50') AT TIME ZONE 'America/Argentina/Buenos_Aires', 'CONFIRMED'::"AppointmentStatus", now(), now() FROM next_thu
+INSERT INTO appointments ("id", "therapistId", "sessionType", "userId", "startTs", "endTs", "status", "price", "createdAt", "updatedAt")
+SELECT gen_random_uuid(), 'seed-1', 'Presencial', 'user-b2', (t + TIME '15:00') AT TIME ZONE 'America/Argentina/Buenos_Aires', (t + TIME '15:50') AT TIME ZONE 'America/Argentina/Buenos_Aires', 'CONFIRMED'::"AppointmentStatus", (SELECT t."pricePerSession" FROM therapists t WHERE t.id = 'seed-1')::float, now(), now() FROM next_thu
 ON CONFLICT DO NOTHING;
 

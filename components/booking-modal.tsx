@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, type SyntheticEvent } from "react"
 import { X } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
@@ -8,6 +8,8 @@ import { SchedulingCalendar } from "./scheduling-calendar"
 import { SessionType } from "./therapist-card"
 import { addMinutes } from "date-fns"
 import { toZonedTime } from 'date-fns-tz';
+import Snackbar from "@mui/material/Snackbar"
+import Alert from "@mui/material/Alert"
 
 interface TimeSlot {
   time: string
@@ -34,6 +36,9 @@ export function BookingModal({ isOpen, onClose, therapist }: BookingModalProps) 
   const [selectedTime, setSelectedTime] = useState<TimeSlot | null>(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const clientTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC'
+  const [snackbarOpen, setSnackbarOpen] = useState(false)
+  const [snackbarMessage, setSnackbarMessage] = useState("")
+  const [snackbarSeverity, setSnackbarSeverity] = useState<"success" | "error">("success")
 
   const handleTimeSelect = (date: Date, timeSlot: TimeSlot) => {
     setSelectedDate(date)
@@ -68,14 +73,20 @@ export function BookingModal({ isOpen, onClose, therapist }: BookingModalProps) 
         throw new Error(err?.error || 'No se pudo crear la cita')
       }
 
-      alert(`Cita agendada con ${therapist.name} el ${selectedDate.toLocaleDateString()} a las ${selectedTime.time}`)
-      onClose()
+      const successMsg = `Cita agendada con ${therapist.name} el ${selectedDate.toLocaleDateString()} a las ${selectedTime.time}`
+      setSnackbarMessage(successMsg)
+      setSnackbarSeverity("success")
+      setSnackbarOpen(true)
+
       setSelectedDate(null)
       setSelectedTime(null)
     } catch (e: unknown) {
       console.error('error', e)
+
       const msg = e instanceof Error ? e.message : 'Ocurrió un error al crear la cita'
-      alert(msg)
+      setSnackbarMessage(msg)
+      setSnackbarSeverity("error")
+      setSnackbarOpen(true)
     } finally {
       setIsSubmitting(false)
     }
@@ -103,68 +114,86 @@ export function BookingModal({ isOpen, onClose, therapist }: BookingModalProps) 
     return toZonedTime(localIso, tz);
   }
 
+  const handleSnackbarClose = (_event?: SyntheticEvent | Event, reason?: string) => {
+    if (reason === 'clickaway') return
+    setSnackbarOpen(false)
+    onClose()
+  }
+
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent showCloseButton={false} className="max-w-5xl sm:max-w-6xl w-[95vw] max-h-[90vh] overflow-y-auto">
-        <DialogHeader>
-          <DialogTitle className="flex items-center justify-between">
-            <span>Agendar cita</span>
-            <Button variant="ghost" size="sm" onClick={onClose}>
-              <X className="h-4 w-4" />
-            </Button>
-          </DialogTitle>
-        </DialogHeader>
+    <>
+      <Dialog open={isOpen} onOpenChange={onClose}>
+        <DialogContent showCloseButton={false} className="max-w-5xl sm:max-w-6xl w-[95vw] max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="flex items-center justify-between">
+              <span>Agendar cita</span>
+              <Button variant="ghost" size="sm" onClick={onClose}>
+                <X className="h-4 w-4" />
+              </Button>
+            </DialogTitle>
+          </DialogHeader>
 
-        <div className="space-y-6">
-          <SchedulingCalendar
-            therapistName={therapist.name}
-            sessionTypes={therapist.sessionTypes}
-            pricePerSession={therapist.pricePerSession}
-            onTimeSelect={handleTimeSelect}
-            selectedDate={selectedDate || undefined}
-            selectedTime={selectedTime || undefined}
-            therapistId={therapist.id}
-          />
+          <div className="space-y-6">
+            <SchedulingCalendar
+              therapistName={therapist.name}
+              sessionTypes={therapist.sessionTypes}
+              pricePerSession={therapist.pricePerSession}
+              onTimeSelect={handleTimeSelect}
+              selectedDate={selectedDate || undefined}
+              selectedTime={selectedTime || undefined}
+              therapistId={therapist.id}
+            />
 
-          {selectedDate && selectedTime && (
-            <div className="border-t pt-6">
-              <div className="bg-muted p-4 rounded-lg mb-4">
-                <h4 className="font-semibold mb-2">Resumen de la cita</h4>
-                <div className="space-y-1 text-sm">
-                  <p>
-                    <strong>Psicólogo:</strong> {therapist.name}
-                  </p>
-                  <p>
-                    <strong>Fecha:</strong>{" "}
-                    {selectedDate.toLocaleDateString("es-ES", {
-                      weekday: "long",
-                      year: "numeric",
-                      month: "long",
-                      day: "numeric",
-                    })}
-                  </p>
-                  <p>
-                    <strong>Hora:</strong> {selectedTime.time}
-                  </p>
-                  <p>
-                    <strong>Tipo de sesión:</strong> {selectedTime.sessionType}
-                  </p>
-                  <p>
-                    <strong>Costo de la sesión:</strong> ${therapist.pricePerSession}
-                  </p>
+            {selectedDate && selectedTime && (
+              <div className="border-t pt-6">
+                <div className="bg-muted p-4 rounded-lg mb-4">
+                  <h4 className="font-semibold mb-2">Resumen de la cita</h4>
+                  <div className="space-y-1 text-sm">
+                    <p>
+                      <strong>Psicólogo:</strong> {therapist.name}
+                    </p>
+                    <p>
+                      <strong>Fecha:</strong>{" "}
+                      {selectedDate.toLocaleDateString("es-ES", {
+                        weekday: "long",
+                        year: "numeric",
+                        month: "long",
+                        day: "numeric",
+                      })}
+                    </p>
+                    <p>
+                      <strong>Hora:</strong> {selectedTime.time}
+                    </p>
+                    <p>
+                      <strong>Tipo de sesión:</strong> {selectedTime.sessionType}
+                    </p>
+                    <p>
+                      <strong>Costo de la sesión:</strong> ${therapist.pricePerSession}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex justify-end space-x-3">
+                  <Button variant="outline" onClick={onClose}>
+                    Cancelar
+                  </Button>
+                  <Button onClick={handleBooking} disabled={isSubmitting}>{isSubmitting ? 'Creando…' : 'Confirmar reserva'}</Button>
                 </div>
               </div>
-
-              <div className="flex justify-end space-x-3">
-                <Button variant="outline" onClick={onClose}>
-                  Cancelar
-                </Button>
-                <Button onClick={handleBooking} disabled={isSubmitting}>{isSubmitting ? 'Creando…' : 'Confirmar reserva'}</Button>
-              </div>
-            </div>
-          )}
-        </div>
-      </DialogContent>
-    </Dialog>
+            )}
+          </div>
+        </DialogContent>
+      </Dialog>
+      <Snackbar
+        open={snackbarOpen}
+        autoHideDuration={3000}
+        onClose={handleSnackbarClose}
+        anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+      >
+        <Alert onClose={handleSnackbarClose} severity={snackbarSeverity} variant="filled" sx={{ width: '100%' }}>
+          {snackbarMessage}
+        </Alert>
+      </Snackbar>
+    </>
   )
 }

@@ -303,9 +303,8 @@ export function SchedulingCalendar({
                       <span className="font-semibold">${pricePerSession}</span>
                     </div>
                     <div className="flex items-center space-x-4 mt-2 text-xs text-muted-foreground">
-                      <span>📹 Video</span>
-                      <span>📞 Teléfono</span>
-                      <span>🏢 En persona</span>
+                      <span>💻 Online</span>
+                      <span>🏡 Presencial</span>
                     </div>
                   </div>
                 )}
