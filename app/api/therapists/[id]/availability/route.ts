@@ -126,10 +126,9 @@ export async function GET(
         const checkExistingAppointment = appts
           .filter((a) => a.date.toISOString().split('T')[0] === date)
           .some((a) => {
-            const timezonedStart = toZonedTime(a.startTime, a.timezone);
-            timezonedStart.setFullYear(slotStart.getFullYear(), slotStart.getMonth(), slotStart.getDate());
-            const timezonedEnd = toZonedTime(a.endTime, a.timezone);
-            timezonedEnd.setFullYear(slotEnd.getFullYear(), slotEnd.getMonth(), slotEnd.getDate());
+            const timezonedStart = localDateTimeToUtc(date, a.startTime.toISOString().split('T')[1], a.timezone);
+            const timezonedEnd = localDateTimeToUtc(date, a.endTime.toISOString().split('T')[1], a.timezone);
+
             return !(timezonedEnd <= slotStart || timezonedStart >= slotEnd);
           });
 

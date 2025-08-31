@@ -17,7 +17,6 @@ Psi Mammoliti is a therapist discovery and scheduling app. Users can browse ther
 - Timezone-aware slot generation using date-fns and date-fns-tz
 
 ## Known issues
-- Disable time slots already taken by appointments -> Fix logic on date/ time comparisson
 - Implement DB transaction or optimistic insertion in appointment creation
 
 ## Future suggestions
@@ -116,3 +115,7 @@ pnpm prisma generate
 - See an initial analysis for the software components:
 
 ![Challenge Analysis](psi-mammoliti-challenge-v0.png)
+
+- Entity Relationship Diagram:
+
+![ERD](psi-schedule-der.png)
