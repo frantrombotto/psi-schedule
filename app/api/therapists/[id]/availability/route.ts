@@ -48,8 +48,10 @@ export async function GET(
       where: {
         therapistId: therapistId,
         status: { in: ['CONFIRMED', 'PENDING'] },
-        startTs: { gte: new Date(new Date(fromDate ?? '').setHours(0, 0, 0, 0)) },
-        endTs: { lte: new Date(new Date(toDate ?? '').setHours(23, 59, 59, 999)) },
+        date: {
+          gte: new Date(new Date(fromDate ?? '').setHours(0, 0, 0, 0)),
+          lte: new Date(new Date(toDate ?? '').setHours(23, 59, 59, 999)),
+        },
       },
     }),
   ]);
@@ -120,15 +122,16 @@ export async function GET(
       ) {
         const slotStart = start;
         const slotEnd = addMinutes(start, therapist.defaultDurationMinutes);
-        // TODO: Fix comparison of appointment dates
-        const checkExistingAppointment = appts.some(
-          (a) => {
-              const timezonedStart = toZonedTime(a.startTs, userTimezone ?? 'America/Argentina/Buenos_Aires')
-              const timezonedEnd = toZonedTime(a.endTs, userTimezone ?? 'America/Argentina/Buenos_Aires')
 
-            return !(timezonedEnd <= slotStart || timezonedStart >= slotEnd)
-          }
-        );
+        const checkExistingAppointment = appts
+          .filter((a) => a.date.toISOString().split('T')[0] === date)
+          .some((a) => {
+            const timezonedStart = toZonedTime(a.startTime, a.timezone);
+            timezonedStart.setFullYear(slotStart.getFullYear(), slotStart.getMonth(), slotStart.getDate());
+            const timezonedEnd = toZonedTime(a.endTime, a.timezone);
+            timezonedEnd.setFullYear(slotEnd.getFullYear(), slotEnd.getMonth(), slotEnd.getDate());
+            return !(timezonedEnd <= slotStart || timezonedStart >= slotEnd);
+          });
 
         slots[date] = slots[date] ?? [];
         slots[date].push({

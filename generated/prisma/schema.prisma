@@ -93,9 +93,13 @@ model Appointment {
   userId String
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  startTs DateTime          @db.Timestamptz(6)
-  endTs   DateTime          @db.Timestamptz(6)
-  status  AppointmentStatus @default(CONFIRMED)
+  status AppointmentStatus @default(CONFIRMED)
+
+  date      DateTime @db.Date
+  startTime DateTime @db.Time
+  endTime   DateTime @db.Time
+
+  timezone String
 
   price Float
 
@@ -103,9 +107,9 @@ model Appointment {
   updatedAt DateTime @updatedAt @db.Timestamptz(6)
 
   // prevent exact duplicate same-range bookings (helps but doesn't replace overlap check)
-  @@unique([therapistId, startTs, endTs])
+  @@unique([therapistId, date, startTime, endTime])
   // index used to quickly find overlapping appointments for a date range
-  @@index([therapistId, startTs, endTs])
+  @@index([therapistId, date, startTime, endTime])
   @@map("appointments")
 }
 

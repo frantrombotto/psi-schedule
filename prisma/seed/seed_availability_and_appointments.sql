@@ -114,8 +114,14 @@ WITH base AS (
 ), next_mon AS (
   SELECT (d + ((8 - EXTRACT(DOW FROM d)::int) % 7))::date AS m FROM base
 )
-INSERT INTO appointments ("id", "therapistId", "sessionType", "userId", "startTs", "endTs", "status", "price", "createdAt", "updatedAt")
-SELECT gen_random_uuid(), 'seed-1', 'Online', 'user-a1', (m + TIME '09:30') AT TIME ZONE 'America/Argentina/Buenos_Aires', (m + TIME '10:20') AT TIME ZONE 'America/Argentina/Buenos_Aires', 'CONFIRMED'::"AppointmentStatus", (SELECT t."pricePerSession" FROM therapists t WHERE t.id = 'seed-1')::float, now(), now() FROM next_mon
+INSERT INTO appointments ("id", "therapistId", "sessionType", "userId", "date", "startTime", "endTime", "timezone", "status", "price", "createdAt", "updatedAt")
+SELECT gen_random_uuid(), 'seed-1', 'Online', 'user-a1', 
+       m,
+       TIME '09:30',
+       TIME '10:20',
+       'America/Argentina/Buenos_Aires', 'CONFIRMED'::"AppointmentStatus", 
+       (SELECT t."pricePerSession" FROM therapists t WHERE t.id = 'seed-1')::float, now(), now() 
+FROM next_mon
 ON CONFLICT DO NOTHING;
 
 -- Appointment 2: Presencial, next Thursday 15:00-15:50
@@ -124,7 +130,13 @@ WITH base AS (
 ), next_thu AS (
   SELECT (d + ((11 - EXTRACT(DOW FROM d)::int) % 7))::date AS t FROM base
 )
-INSERT INTO appointments ("id", "therapistId", "sessionType", "userId", "startTs", "endTs", "status", "price", "createdAt", "updatedAt")
-SELECT gen_random_uuid(), 'seed-1', 'Presencial', 'user-b2', (t + TIME '15:00') AT TIME ZONE 'America/Argentina/Buenos_Aires', (t + TIME '15:50') AT TIME ZONE 'America/Argentina/Buenos_Aires', 'CONFIRMED'::"AppointmentStatus", (SELECT t."pricePerSession" FROM therapists t WHERE t.id = 'seed-1')::float, now(), now() FROM next_thu
+INSERT INTO appointments ("id", "therapistId", "sessionType", "userId", "date", "startTime", "endTime", "timezone", "status", "price", "createdAt", "updatedAt")
+SELECT gen_random_uuid(), 'seed-1', 'Presencial', 'user-b2', 
+       t,
+       TIME '15:00',
+       TIME '15:50',
+       'America/Argentina/Buenos_Aires', 'CONFIRMED'::"AppointmentStatus", 
+       (SELECT t."pricePerSession" FROM therapists t WHERE t.id = 'seed-1')::float, now(), now() 
+FROM next_thu
 ON CONFLICT DO NOTHING;
 
