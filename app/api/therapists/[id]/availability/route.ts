@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
-import { addMinutes, format } from 'date-fns';
+import { addDays, addMinutes } from 'date-fns';
 import { toZonedTime, formatInTimeZone } from 'date-fns-tz';
 
 type Slot = {
@@ -39,8 +39,8 @@ export async function GET(
       where: {
         therapistId: therapistId,
         date: {
-          gte: new Date(new Date(fromDate ?? '').setHours(0, 0, 0, 0)),
-          lte: new Date(new Date(toDate ?? '').setHours(23, 59, 59, 999)),
+          gte: toZonedTime(`${fromDate ?? ''}T00:00:00.000Z`, 'UTC'),
+          lte: toZonedTime(`${toDate ?? ''}T23:59:59.999Z`, 'UTC'),
         },
       },
     }),
@@ -49,8 +49,8 @@ export async function GET(
         therapistId: therapistId,
         status: { in: ['CONFIRMED', 'PENDING'] },
         date: {
-          gte: new Date(new Date(fromDate ?? '').setHours(0, 0, 0, 0)),
-          lte: new Date(new Date(toDate ?? '').setHours(23, 59, 59, 999)),
+          gte: toZonedTime(`${fromDate ?? ''}T00:00:00.000Z`, 'UTC'),
+          lte: toZonedTime(`${toDate ?? ''}T23:59:59.999Z`, 'UTC'),
         },
       },
     }),
@@ -67,7 +67,7 @@ export async function GET(
   );
 
   for (const date of datesForAppointments) {
-    const dateWeekday = new Date(date).getDay();
+    const dateWeekday = toZonedTime(date, 'UTC').getDay();
     const dayRules = rules.filter((rule) => rule.weekday === dateWeekday);
     let availabilityWindows =
       dayRules.map((rule) => {
@@ -157,13 +157,13 @@ const getDateRangeArray = (from: string, to: string): string[] => {
   if (!from || !to) {
     return [];
   }
-  const start = new Date(from);
-  const end = new Date(to);
+  const start = toZonedTime(`${from}T00:00:00.000Z`, 'UTC');
+  const end = toZonedTime(`${to}T23:59:59.999Z`, 'UTC');
   const dates: string[] = [];
-  let current = new Date(start);
+  let current = start;
   while (current <= end) {
     dates.push(current.toISOString().split('T')[0]);
-    current.setUTCDate(current.getUTCDate() + 1);
+    current = addDays(current, 1);
   }
   return dates;
 };
