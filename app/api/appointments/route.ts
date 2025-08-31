@@ -11,15 +11,17 @@ export async function POST(req: NextRequest) {
       therapistId,
       userId,
       sessionType,
-      startTs,
-      endTs,
+      date, // date in YYYY-MM-DD format
+      startTime, // time in HH:MM:SS format
+      endTime, // time in HH:MM:SS format
+      timezone,
       status, // optional; defaults to CONFIRMED by schema
       price,
     } = body || {}
 
-    if (!therapistId || !userId || !sessionType || !startTs || !endTs) {
+    if (!therapistId || !userId || !sessionType || !date || !startTime || !endTime || !timezone) {
       return NextResponse.json(
-        { error: 'therapistId, userId, sessionType, startTs, and endTs are required' },
+        { error: 'therapistId, userId, sessionType, date, startTime, endTime, and timezone are required' },
         { status: 400 }
       )
     }
@@ -29,8 +31,10 @@ export async function POST(req: NextRequest) {
         therapistId,
         userId,
         sessionType,
-        startTs,
-        endTs,
+        date: new Date(`${date}T00:00:00.000Z`),
+        startTime: new Date(`1970-01-01T${startTime}Z`),
+        endTime: new Date(`1970-01-01T${endTime}Z`),
+        timezone,
         status,
         price,
       },
@@ -38,6 +42,7 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({ data: created }, { status: 201 })
   } catch (error: unknown) {
+    console.log(error)
     return NextResponse.json({ error: 'Failed to create appointment' }, { status: 500 })
   }
 }

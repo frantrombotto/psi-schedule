@@ -282,8 +282,8 @@ export namespace Prisma {
   export import Exact = $Public.Exact
 
   /**
-   * Prisma Client JS version: 6.14.0
-   * Query Engine version: 717184b7b35ea05dfa71a3236b7af656013e1e49
+   * Prisma Client JS version: 6.15.0
+   * Query Engine version: 85179d7826409ee107a6ba334b5e305ae3fba9fb
    */
   export type PrismaVersion = {
     client: string
@@ -4929,9 +4929,11 @@ export namespace Prisma {
     therapistId: string | null
     sessionType: string | null
     userId: string | null
-    startTs: Date | null
-    endTs: Date | null
     status: $Enums.AppointmentStatus | null
+    date: Date | null
+    startTime: Date | null
+    endTime: Date | null
+    timezone: string | null
     price: number | null
     createdAt: Date | null
     updatedAt: Date | null
@@ -4942,9 +4944,11 @@ export namespace Prisma {
     therapistId: string | null
     sessionType: string | null
     userId: string | null
-    startTs: Date | null
-    endTs: Date | null
     status: $Enums.AppointmentStatus | null
+    date: Date | null
+    startTime: Date | null
+    endTime: Date | null
+    timezone: string | null
     price: number | null
     createdAt: Date | null
     updatedAt: Date | null
@@ -4955,9 +4959,11 @@ export namespace Prisma {
     therapistId: number
     sessionType: number
     userId: number
-    startTs: number
-    endTs: number
     status: number
+    date: number
+    startTime: number
+    endTime: number
+    timezone: number
     price: number
     createdAt: number
     updatedAt: number
@@ -4978,9 +4984,11 @@ export namespace Prisma {
     therapistId?: true
     sessionType?: true
     userId?: true
-    startTs?: true
-    endTs?: true
     status?: true
+    date?: true
+    startTime?: true
+    endTime?: true
+    timezone?: true
     price?: true
     createdAt?: true
     updatedAt?: true
@@ -4991,9 +4999,11 @@ export namespace Prisma {
     therapistId?: true
     sessionType?: true
     userId?: true
-    startTs?: true
-    endTs?: true
     status?: true
+    date?: true
+    startTime?: true
+    endTime?: true
+    timezone?: true
     price?: true
     createdAt?: true
     updatedAt?: true
@@ -5004,9 +5014,11 @@ export namespace Prisma {
     therapistId?: true
     sessionType?: true
     userId?: true
-    startTs?: true
-    endTs?: true
     status?: true
+    date?: true
+    startTime?: true
+    endTime?: true
+    timezone?: true
     price?: true
     createdAt?: true
     updatedAt?: true
@@ -5104,9 +5116,11 @@ export namespace Prisma {
     therapistId: string
     sessionType: string
     userId: string
-    startTs: Date
-    endTs: Date
     status: $Enums.AppointmentStatus
+    date: Date
+    startTime: Date
+    endTime: Date
+    timezone: string
     price: number
     createdAt: Date
     updatedAt: Date
@@ -5136,9 +5150,11 @@ export namespace Prisma {
     therapistId?: boolean
     sessionType?: boolean
     userId?: boolean
-    startTs?: boolean
-    endTs?: boolean
     status?: boolean
+    date?: boolean
+    startTime?: boolean
+    endTime?: boolean
+    timezone?: boolean
     price?: boolean
     createdAt?: boolean
     updatedAt?: boolean
@@ -5151,9 +5167,11 @@ export namespace Prisma {
     therapistId?: boolean
     sessionType?: boolean
     userId?: boolean
-    startTs?: boolean
-    endTs?: boolean
     status?: boolean
+    date?: boolean
+    startTime?: boolean
+    endTime?: boolean
+    timezone?: boolean
     price?: boolean
     createdAt?: boolean
     updatedAt?: boolean
@@ -5166,9 +5184,11 @@ export namespace Prisma {
     therapistId?: boolean
     sessionType?: boolean
     userId?: boolean
-    startTs?: boolean
-    endTs?: boolean
     status?: boolean
+    date?: boolean
+    startTime?: boolean
+    endTime?: boolean
+    timezone?: boolean
     price?: boolean
     createdAt?: boolean
     updatedAt?: boolean
@@ -5181,15 +5201,17 @@ export namespace Prisma {
     therapistId?: boolean
     sessionType?: boolean
     userId?: boolean
-    startTs?: boolean
-    endTs?: boolean
     status?: boolean
+    date?: boolean
+    startTime?: boolean
+    endTime?: boolean
+    timezone?: boolean
     price?: boolean
     createdAt?: boolean
     updatedAt?: boolean
   }
 
-  export type AppointmentOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "therapistId" | "sessionType" | "userId" | "startTs" | "endTs" | "status" | "price" | "createdAt" | "updatedAt", ExtArgs["result"]["appointment"]>
+  export type AppointmentOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "therapistId" | "sessionType" | "userId" | "status" | "date" | "startTime" | "endTime" | "timezone" | "price" | "createdAt" | "updatedAt", ExtArgs["result"]["appointment"]>
   export type AppointmentInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     therapist?: boolean | TherapistDefaultArgs<ExtArgs>
     user?: boolean | UserDefaultArgs<ExtArgs>
@@ -5214,9 +5236,11 @@ export namespace Prisma {
       therapistId: string
       sessionType: string
       userId: string
-      startTs: Date
-      endTs: Date
       status: $Enums.AppointmentStatus
+      date: Date
+      startTime: Date
+      endTime: Date
+      timezone: string
       price: number
       createdAt: Date
       updatedAt: Date
@@ -5649,9 +5673,11 @@ export namespace Prisma {
     readonly therapistId: FieldRef<"Appointment", 'String'>
     readonly sessionType: FieldRef<"Appointment", 'String'>
     readonly userId: FieldRef<"Appointment", 'String'>
-    readonly startTs: FieldRef<"Appointment", 'DateTime'>
-    readonly endTs: FieldRef<"Appointment", 'DateTime'>
     readonly status: FieldRef<"Appointment", 'AppointmentStatus'>
+    readonly date: FieldRef<"Appointment", 'DateTime'>
+    readonly startTime: FieldRef<"Appointment", 'DateTime'>
+    readonly endTime: FieldRef<"Appointment", 'DateTime'>
+    readonly timezone: FieldRef<"Appointment", 'String'>
     readonly price: FieldRef<"Appointment", 'Float'>
     readonly createdAt: FieldRef<"Appointment", 'DateTime'>
     readonly updatedAt: FieldRef<"Appointment", 'DateTime'>
@@ -7264,9 +7290,11 @@ export namespace Prisma {
     therapistId: 'therapistId',
     sessionType: 'sessionType',
     userId: 'userId',
-    startTs: 'startTs',
-    endTs: 'endTs',
     status: 'status',
+    date: 'date',
+    startTime: 'startTime',
+    endTime: 'endTime',
+    timezone: 'timezone',
     price: 'price',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt'
@@ -7687,9 +7715,11 @@ export namespace Prisma {
     therapistId?: StringFilter<"Appointment"> | string
     sessionType?: StringFilter<"Appointment"> | string
     userId?: StringFilter<"Appointment"> | string
-    startTs?: DateTimeFilter<"Appointment"> | Date | string
-    endTs?: DateTimeFilter<"Appointment"> | Date | string
     status?: EnumAppointmentStatusFilter<"Appointment"> | $Enums.AppointmentStatus
+    date?: DateTimeFilter<"Appointment"> | Date | string
+    startTime?: DateTimeFilter<"Appointment"> | Date | string
+    endTime?: DateTimeFilter<"Appointment"> | Date | string
+    timezone?: StringFilter<"Appointment"> | string
     price?: FloatFilter<"Appointment"> | number
     createdAt?: DateTimeFilter<"Appointment"> | Date | string
     updatedAt?: DateTimeFilter<"Appointment"> | Date | string
@@ -7702,9 +7732,11 @@ export namespace Prisma {
     therapistId?: SortOrder
     sessionType?: SortOrder
     userId?: SortOrder
-    startTs?: SortOrder
-    endTs?: SortOrder
     status?: SortOrder
+    date?: SortOrder
+    startTime?: SortOrder
+    endTime?: SortOrder
+    timezone?: SortOrder
     price?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -7714,31 +7746,35 @@ export namespace Prisma {
 
   export type AppointmentWhereUniqueInput = Prisma.AtLeast<{
     id?: string
-    therapistId_startTs_endTs?: AppointmentTherapistIdStartTsEndTsCompoundUniqueInput
+    therapistId_date_startTime_endTime?: AppointmentTherapistIdDateStartTimeEndTimeCompoundUniqueInput
     AND?: AppointmentWhereInput | AppointmentWhereInput[]
     OR?: AppointmentWhereInput[]
     NOT?: AppointmentWhereInput | AppointmentWhereInput[]
     therapistId?: StringFilter<"Appointment"> | string
     sessionType?: StringFilter<"Appointment"> | string
     userId?: StringFilter<"Appointment"> | string
-    startTs?: DateTimeFilter<"Appointment"> | Date | string
-    endTs?: DateTimeFilter<"Appointment"> | Date | string
     status?: EnumAppointmentStatusFilter<"Appointment"> | $Enums.AppointmentStatus
+    date?: DateTimeFilter<"Appointment"> | Date | string
+    startTime?: DateTimeFilter<"Appointment"> | Date | string
+    endTime?: DateTimeFilter<"Appointment"> | Date | string
+    timezone?: StringFilter<"Appointment"> | string
     price?: FloatFilter<"Appointment"> | number
     createdAt?: DateTimeFilter<"Appointment"> | Date | string
     updatedAt?: DateTimeFilter<"Appointment"> | Date | string
     therapist?: XOR<TherapistScalarRelationFilter, TherapistWhereInput>
     user?: XOR<UserScalarRelationFilter, UserWhereInput>
-  }, "id" | "therapistId_startTs_endTs">
+  }, "id" | "therapistId_date_startTime_endTime">
 
   export type AppointmentOrderByWithAggregationInput = {
     id?: SortOrder
     therapistId?: SortOrder
     sessionType?: SortOrder
     userId?: SortOrder
-    startTs?: SortOrder
-    endTs?: SortOrder
     status?: SortOrder
+    date?: SortOrder
+    startTime?: SortOrder
+    endTime?: SortOrder
+    timezone?: SortOrder
     price?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -7757,9 +7793,11 @@ export namespace Prisma {
     therapistId?: StringWithAggregatesFilter<"Appointment"> | string
     sessionType?: StringWithAggregatesFilter<"Appointment"> | string
     userId?: StringWithAggregatesFilter<"Appointment"> | string
-    startTs?: DateTimeWithAggregatesFilter<"Appointment"> | Date | string
-    endTs?: DateTimeWithAggregatesFilter<"Appointment"> | Date | string
     status?: EnumAppointmentStatusWithAggregatesFilter<"Appointment"> | $Enums.AppointmentStatus
+    date?: DateTimeWithAggregatesFilter<"Appointment"> | Date | string
+    startTime?: DateTimeWithAggregatesFilter<"Appointment"> | Date | string
+    endTime?: DateTimeWithAggregatesFilter<"Appointment"> | Date | string
+    timezone?: StringWithAggregatesFilter<"Appointment"> | string
     price?: FloatWithAggregatesFilter<"Appointment"> | number
     createdAt?: DateTimeWithAggregatesFilter<"Appointment"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"Appointment"> | Date | string
@@ -8168,9 +8206,11 @@ export namespace Prisma {
   export type AppointmentCreateInput = {
     id?: string
     sessionType: string
-    startTs: Date | string
-    endTs: Date | string
     status?: $Enums.AppointmentStatus
+    date: Date | string
+    startTime: Date | string
+    endTime: Date | string
+    timezone: string
     price: number
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -8183,9 +8223,11 @@ export namespace Prisma {
     therapistId: string
     sessionType: string
     userId: string
-    startTs: Date | string
-    endTs: Date | string
     status?: $Enums.AppointmentStatus
+    date: Date | string
+    startTime: Date | string
+    endTime: Date | string
+    timezone: string
     price: number
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -8194,9 +8236,11 @@ export namespace Prisma {
   export type AppointmentUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
     sessionType?: StringFieldUpdateOperationsInput | string
-    startTs?: DateTimeFieldUpdateOperationsInput | Date | string
-    endTs?: DateTimeFieldUpdateOperationsInput | Date | string
     status?: EnumAppointmentStatusFieldUpdateOperationsInput | $Enums.AppointmentStatus
+    date?: DateTimeFieldUpdateOperationsInput | Date | string
+    startTime?: DateTimeFieldUpdateOperationsInput | Date | string
+    endTime?: DateTimeFieldUpdateOperationsInput | Date | string
+    timezone?: StringFieldUpdateOperationsInput | string
     price?: FloatFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -8209,9 +8253,11 @@ export namespace Prisma {
     therapistId?: StringFieldUpdateOperationsInput | string
     sessionType?: StringFieldUpdateOperationsInput | string
     userId?: StringFieldUpdateOperationsInput | string
-    startTs?: DateTimeFieldUpdateOperationsInput | Date | string
-    endTs?: DateTimeFieldUpdateOperationsInput | Date | string
     status?: EnumAppointmentStatusFieldUpdateOperationsInput | $Enums.AppointmentStatus
+    date?: DateTimeFieldUpdateOperationsInput | Date | string
+    startTime?: DateTimeFieldUpdateOperationsInput | Date | string
+    endTime?: DateTimeFieldUpdateOperationsInput | Date | string
+    timezone?: StringFieldUpdateOperationsInput | string
     price?: FloatFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -8222,9 +8268,11 @@ export namespace Prisma {
     therapistId: string
     sessionType: string
     userId: string
-    startTs: Date | string
-    endTs: Date | string
     status?: $Enums.AppointmentStatus
+    date: Date | string
+    startTime: Date | string
+    endTime: Date | string
+    timezone: string
     price: number
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -8233,9 +8281,11 @@ export namespace Prisma {
   export type AppointmentUpdateManyMutationInput = {
     id?: StringFieldUpdateOperationsInput | string
     sessionType?: StringFieldUpdateOperationsInput | string
-    startTs?: DateTimeFieldUpdateOperationsInput | Date | string
-    endTs?: DateTimeFieldUpdateOperationsInput | Date | string
     status?: EnumAppointmentStatusFieldUpdateOperationsInput | $Enums.AppointmentStatus
+    date?: DateTimeFieldUpdateOperationsInput | Date | string
+    startTime?: DateTimeFieldUpdateOperationsInput | Date | string
+    endTime?: DateTimeFieldUpdateOperationsInput | Date | string
+    timezone?: StringFieldUpdateOperationsInput | string
     price?: FloatFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -8246,9 +8296,11 @@ export namespace Prisma {
     therapistId?: StringFieldUpdateOperationsInput | string
     sessionType?: StringFieldUpdateOperationsInput | string
     userId?: StringFieldUpdateOperationsInput | string
-    startTs?: DateTimeFieldUpdateOperationsInput | Date | string
-    endTs?: DateTimeFieldUpdateOperationsInput | Date | string
     status?: EnumAppointmentStatusFieldUpdateOperationsInput | $Enums.AppointmentStatus
+    date?: DateTimeFieldUpdateOperationsInput | Date | string
+    startTime?: DateTimeFieldUpdateOperationsInput | Date | string
+    endTime?: DateTimeFieldUpdateOperationsInput | Date | string
+    timezone?: StringFieldUpdateOperationsInput | string
     price?: FloatFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -8738,10 +8790,11 @@ export namespace Prisma {
     isNot?: UserWhereInput
   }
 
-  export type AppointmentTherapistIdStartTsEndTsCompoundUniqueInput = {
+  export type AppointmentTherapistIdDateStartTimeEndTimeCompoundUniqueInput = {
     therapistId: string
-    startTs: Date | string
-    endTs: Date | string
+    date: Date | string
+    startTime: Date | string
+    endTime: Date | string
   }
 
   export type AppointmentCountOrderByAggregateInput = {
@@ -8749,9 +8802,11 @@ export namespace Prisma {
     therapistId?: SortOrder
     sessionType?: SortOrder
     userId?: SortOrder
-    startTs?: SortOrder
-    endTs?: SortOrder
     status?: SortOrder
+    date?: SortOrder
+    startTime?: SortOrder
+    endTime?: SortOrder
+    timezone?: SortOrder
     price?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -8766,9 +8821,11 @@ export namespace Prisma {
     therapistId?: SortOrder
     sessionType?: SortOrder
     userId?: SortOrder
-    startTs?: SortOrder
-    endTs?: SortOrder
     status?: SortOrder
+    date?: SortOrder
+    startTime?: SortOrder
+    endTime?: SortOrder
+    timezone?: SortOrder
     price?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -8779,9 +8836,11 @@ export namespace Prisma {
     therapistId?: SortOrder
     sessionType?: SortOrder
     userId?: SortOrder
-    startTs?: SortOrder
-    endTs?: SortOrder
     status?: SortOrder
+    date?: SortOrder
+    startTime?: SortOrder
+    endTime?: SortOrder
+    timezone?: SortOrder
     price?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -9402,9 +9461,11 @@ export namespace Prisma {
   export type AppointmentCreateWithoutTherapistInput = {
     id?: string
     sessionType: string
-    startTs: Date | string
-    endTs: Date | string
     status?: $Enums.AppointmentStatus
+    date: Date | string
+    startTime: Date | string
+    endTime: Date | string
+    timezone: string
     price: number
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -9415,9 +9476,11 @@ export namespace Prisma {
     id?: string
     sessionType: string
     userId: string
-    startTs: Date | string
-    endTs: Date | string
     status?: $Enums.AppointmentStatus
+    date: Date | string
+    startTime: Date | string
+    endTime: Date | string
+    timezone: string
     price: number
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -9519,9 +9582,11 @@ export namespace Prisma {
     therapistId?: StringFilter<"Appointment"> | string
     sessionType?: StringFilter<"Appointment"> | string
     userId?: StringFilter<"Appointment"> | string
-    startTs?: DateTimeFilter<"Appointment"> | Date | string
-    endTs?: DateTimeFilter<"Appointment"> | Date | string
     status?: EnumAppointmentStatusFilter<"Appointment"> | $Enums.AppointmentStatus
+    date?: DateTimeFilter<"Appointment"> | Date | string
+    startTime?: DateTimeFilter<"Appointment"> | Date | string
+    endTime?: DateTimeFilter<"Appointment"> | Date | string
+    timezone?: StringFilter<"Appointment"> | string
     price?: FloatFilter<"Appointment"> | number
     createdAt?: DateTimeFilter<"Appointment"> | Date | string
     updatedAt?: DateTimeFilter<"Appointment"> | Date | string
@@ -9918,9 +9983,11 @@ export namespace Prisma {
   export type AppointmentCreateWithoutUserInput = {
     id?: string
     sessionType: string
-    startTs: Date | string
-    endTs: Date | string
     status?: $Enums.AppointmentStatus
+    date: Date | string
+    startTime: Date | string
+    endTime: Date | string
+    timezone: string
     price: number
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -9931,9 +9998,11 @@ export namespace Prisma {
     id?: string
     therapistId: string
     sessionType: string
-    startTs: Date | string
-    endTs: Date | string
     status?: $Enums.AppointmentStatus
+    date: Date | string
+    startTime: Date | string
+    endTime: Date | string
+    timezone: string
     price: number
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -9991,9 +10060,11 @@ export namespace Prisma {
     id?: string
     sessionType: string
     userId: string
-    startTs: Date | string
-    endTs: Date | string
     status?: $Enums.AppointmentStatus
+    date: Date | string
+    startTime: Date | string
+    endTime: Date | string
+    timezone: string
     price: number
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -10068,9 +10139,11 @@ export namespace Prisma {
   export type AppointmentUpdateWithoutTherapistInput = {
     id?: StringFieldUpdateOperationsInput | string
     sessionType?: StringFieldUpdateOperationsInput | string
-    startTs?: DateTimeFieldUpdateOperationsInput | Date | string
-    endTs?: DateTimeFieldUpdateOperationsInput | Date | string
     status?: EnumAppointmentStatusFieldUpdateOperationsInput | $Enums.AppointmentStatus
+    date?: DateTimeFieldUpdateOperationsInput | Date | string
+    startTime?: DateTimeFieldUpdateOperationsInput | Date | string
+    endTime?: DateTimeFieldUpdateOperationsInput | Date | string
+    timezone?: StringFieldUpdateOperationsInput | string
     price?: FloatFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -10081,9 +10154,11 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     sessionType?: StringFieldUpdateOperationsInput | string
     userId?: StringFieldUpdateOperationsInput | string
-    startTs?: DateTimeFieldUpdateOperationsInput | Date | string
-    endTs?: DateTimeFieldUpdateOperationsInput | Date | string
     status?: EnumAppointmentStatusFieldUpdateOperationsInput | $Enums.AppointmentStatus
+    date?: DateTimeFieldUpdateOperationsInput | Date | string
+    startTime?: DateTimeFieldUpdateOperationsInput | Date | string
+    endTime?: DateTimeFieldUpdateOperationsInput | Date | string
+    timezone?: StringFieldUpdateOperationsInput | string
     price?: FloatFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -10093,9 +10168,11 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     sessionType?: StringFieldUpdateOperationsInput | string
     userId?: StringFieldUpdateOperationsInput | string
-    startTs?: DateTimeFieldUpdateOperationsInput | Date | string
-    endTs?: DateTimeFieldUpdateOperationsInput | Date | string
     status?: EnumAppointmentStatusFieldUpdateOperationsInput | $Enums.AppointmentStatus
+    date?: DateTimeFieldUpdateOperationsInput | Date | string
+    startTime?: DateTimeFieldUpdateOperationsInput | Date | string
+    endTime?: DateTimeFieldUpdateOperationsInput | Date | string
+    timezone?: StringFieldUpdateOperationsInput | string
     price?: FloatFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -10105,9 +10182,11 @@ export namespace Prisma {
     id?: string
     therapistId: string
     sessionType: string
-    startTs: Date | string
-    endTs: Date | string
     status?: $Enums.AppointmentStatus
+    date: Date | string
+    startTime: Date | string
+    endTime: Date | string
+    timezone: string
     price: number
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -10116,9 +10195,11 @@ export namespace Prisma {
   export type AppointmentUpdateWithoutUserInput = {
     id?: StringFieldUpdateOperationsInput | string
     sessionType?: StringFieldUpdateOperationsInput | string
-    startTs?: DateTimeFieldUpdateOperationsInput | Date | string
-    endTs?: DateTimeFieldUpdateOperationsInput | Date | string
     status?: EnumAppointmentStatusFieldUpdateOperationsInput | $Enums.AppointmentStatus
+    date?: DateTimeFieldUpdateOperationsInput | Date | string
+    startTime?: DateTimeFieldUpdateOperationsInput | Date | string
+    endTime?: DateTimeFieldUpdateOperationsInput | Date | string
+    timezone?: StringFieldUpdateOperationsInput | string
     price?: FloatFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -10129,9 +10210,11 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     therapistId?: StringFieldUpdateOperationsInput | string
     sessionType?: StringFieldUpdateOperationsInput | string
-    startTs?: DateTimeFieldUpdateOperationsInput | Date | string
-    endTs?: DateTimeFieldUpdateOperationsInput | Date | string
     status?: EnumAppointmentStatusFieldUpdateOperationsInput | $Enums.AppointmentStatus
+    date?: DateTimeFieldUpdateOperationsInput | Date | string
+    startTime?: DateTimeFieldUpdateOperationsInput | Date | string
+    endTime?: DateTimeFieldUpdateOperationsInput | Date | string
+    timezone?: StringFieldUpdateOperationsInput | string
     price?: FloatFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -10141,9 +10224,11 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     therapistId?: StringFieldUpdateOperationsInput | string
     sessionType?: StringFieldUpdateOperationsInput | string
-    startTs?: DateTimeFieldUpdateOperationsInput | Date | string
-    endTs?: DateTimeFieldUpdateOperationsInput | Date | string
     status?: EnumAppointmentStatusFieldUpdateOperationsInput | $Enums.AppointmentStatus
+    date?: DateTimeFieldUpdateOperationsInput | Date | string
+    startTime?: DateTimeFieldUpdateOperationsInput | Date | string
+    endTime?: DateTimeFieldUpdateOperationsInput | Date | string
+    timezone?: StringFieldUpdateOperationsInput | string
     price?: FloatFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string

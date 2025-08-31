@@ -61,9 +61,12 @@ CREATE TABLE "public"."appointments" (
     "therapistId" TEXT NOT NULL,
     "sessionType" TEXT NOT NULL,
     "userId" TEXT NOT NULL,
-    "startTs" TIMESTAMPTZ(6) NOT NULL,
-    "endTs" TIMESTAMPTZ(6) NOT NULL,
     "status" "public"."AppointmentStatus" NOT NULL DEFAULT 'CONFIRMED',
+    "date" DATE NOT NULL,
+    "startTime" TIME NOT NULL,
+    "endTime" TIME NOT NULL,
+    "timezone" TEXT NOT NULL,
+    "price" DOUBLE PRECISION NOT NULL,
     "createdAt" TIMESTAMPTZ(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMPTZ(6) NOT NULL,
 
@@ -95,10 +98,10 @@ CREATE INDEX "availability_rules_therapistId_weekday_idx" ON "public"."availabil
 CREATE INDEX "availability_exceptions_therapistId_date_idx" ON "public"."availability_exceptions"("therapistId", "date");
 
 -- CreateIndex
-CREATE INDEX "appointments_therapistId_startTs_endTs_idx" ON "public"."appointments"("therapistId", "startTs", "endTs");
+CREATE INDEX "appointments_therapistId_date_startTime_endTime_idx" ON "public"."appointments"("therapistId", "date", "startTime", "endTime");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "appointments_therapistId_startTs_endTs_key" ON "public"."appointments"("therapistId", "startTs", "endTs");
+CREATE UNIQUE INDEX "appointments_therapistId_date_startTime_endTime_key" ON "public"."appointments"("therapistId", "date", "startTime", "endTime");
 
 -- AddForeignKey
 ALTER TABLE "public"."availability_rules" ADD CONSTRAINT "availability_rules_therapistId_fkey" FOREIGN KEY ("therapistId") REFERENCES "public"."therapists"("id") ON DELETE CASCADE ON UPDATE CASCADE;

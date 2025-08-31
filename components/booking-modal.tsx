@@ -50,7 +50,7 @@ export function BookingModal({ isOpen, onClose, therapist }: BookingModalProps) 
 
     try {
       setIsSubmitting(true)
-      
+
       const start = combineDateAndTime(selectedDate, selectedTime.time, clientTimezone)
       const end = addMinutes(start, therapist.defaultDurationMinutes)
 
@@ -61,8 +61,10 @@ export function BookingModal({ isOpen, onClose, therapist }: BookingModalProps) 
           therapistId: therapist.id,
           userId: 'user-a1', // TODO: Ask user for their info and create user if not exists
           sessionType: selectedTime.sessionType,
-          startTs: start.toISOString(),
-          endTs: end.toISOString(),
+          date: selectedDate.toISOString().split('T')[0],
+          startTime: start.toTimeString().split(' ')[0],
+          endTime: end.toTimeString().split(' ')[0],
+          timezone: clientTimezone,
           price: therapist.pricePerSession,
           status: 'CONFIRMED', // TODO: Implement appointment status confirmation
         }),
