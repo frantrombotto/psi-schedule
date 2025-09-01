@@ -11,6 +11,28 @@ import { toZonedTime } from 'date-fns-tz';
 import Snackbar from "@mui/material/Snackbar"
 import Alert from "@mui/material/Alert"
 
+function TimezoneIndicator({ timezone }: { timezone: string }) {
+  const getTimezoneOffset = () => {
+    const now = new Date()
+    const offset = now.getTimezoneOffset()
+    const hours = Math.abs(Math.floor(offset / 60))
+    const minutes = Math.abs(offset % 60)
+    const sign = offset > 0 ? '-' : '+'
+    return `${sign}${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`
+  }
+
+  return (
+    <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 mb-4">
+      <div className="flex items-center space-x-2 text-blue-800">
+        <span className="text-lg">🌍</span>
+        <span className="text-sm font-medium">
+          Los horarios mostrados están en tu zona horaria: ({getTimezoneOffset()}) {timezone}
+        </span>
+      </div>
+    </div>
+  )
+}
+
 interface TimeSlot {
   time: string
   available: boolean
@@ -136,6 +158,7 @@ export function BookingModal({ isOpen, onClose, therapist }: BookingModalProps) 
           </DialogHeader>
 
           <div className="space-y-6">
+            <TimezoneIndicator timezone={clientTimezone} />
             <SchedulingCalendar
               therapistName={therapist.name}
               sessionTypes={therapist.sessionTypes}
